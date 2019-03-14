@@ -175,10 +175,49 @@ int main(){
                                         }else{
                                             if(query[0] == "exit" || query[0] == "quit"){
                                                 control = false;
-                                            }else{ //command not found message. last resort
+                                            }else{
+                                                if(query[0][0] == '.' && query[0][1] == '/'){ // remove execute command
+                                                    string execName = query[0];
+                                                    for(int i = 0; i < 2; i++){
+                                                        execName.erase(execName.begin());
+                                                    }
+                                                    found = false;
+                                                    for (int i = 0; i < currDirPtr->getFilesSize(); i++){ //find the file here. Search.
+                                                        if(currDirPtr->getFilesVect()[i].getFileName() == execName){
+                                                            cout << execName
+                                                                 << " has been executed."
+                                                                 << endl;
+                                                            found = true;
+                                                        }
+                                                    }
+                                                    for (int i = 0; i < currDirPtr->getSize(); i++){ //make sure to check directories next, new error message
+                                                        if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == execName){
+                                                            cout << "-mash: " 
+                                                                 << query[0] 
+                                                                 << ": is a directory" 
+                                                                 << endl;
+                                                            found = true;
+                                                        }
+                                                    }
+                                                    if(query[0].size() == 2){ //if empty command
+                                                        cout << "-mash: " 
+                                                             << query[0] 
+                                                             << ": is a directory" 
+                                                             << endl;
+                                                    }
+                                                    else{
+                                                        if(found == false){ //no file to execute
+                                                            cout << "-mash: " 
+                                                                << query[0] 
+                                                                << ": No such file or directory" 
+                                                                << endl;
+                                                        }
+                                                    }
+                                                }else{
                                                 cout << "-mash: " 
                                                      << query[0]
                                                      << ": command not found\n";
+                                                }
                                             }
                                         }
                                     }

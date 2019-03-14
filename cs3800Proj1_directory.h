@@ -24,6 +24,7 @@ class directory{
         //inner properties of directory class
         string permissions;
         string userName;
+        string groupName;
         int fileSize;
         string timestamp;
         string path;
