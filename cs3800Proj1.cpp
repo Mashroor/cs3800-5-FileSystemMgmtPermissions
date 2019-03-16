@@ -14,6 +14,8 @@
 
 #include "cs3800Proj1_file.h"
 #include "cs3800Proj1_directory.h"
+#include "cs3800Proj1_user.h"
+#include "cs3800Proj1_group.h"
 
 int main(){
     //while loop control, used in exit
@@ -25,9 +27,14 @@ int main(){
     currDir.setName("/"); // This is the root, we cant move above this
     directory* currDirPtr = &currDir; //pointer, this will allow us to move between directories via pointing
     
+    vector<user> userVect; //store all users in this. we can move around in this.
+    user defaultUser("user"); //set a default user. of Group default.
+    userVect.push_back(defaultUser); //throw this in to keep track of current user. start at default.
+    user* currUserPtr = &defaultUser; //pointer to current user. we will be changing this
+
     //parsing code for user
     while(control){ 
-    cout << BOLDCYAN << "user:~" << RESET << currDirPtr->getPath() << "$ "; //to emulate linux, print this. user is not an actual obj or anything
+    cout << BOLDCYAN << currUserPtr->getUserName() << ":~" << RESET << currDirPtr->getPath() << "$ "; //to emulate linux, print this. user is not an actual obj or anything
     getline(cin, input);
     istringstream ss(input);
 	string token;
@@ -70,7 +77,7 @@ int main(){
                 }else{
                     if(query[0] == "ls"){
                         if(query.size()>1 && query[1] == "-l"){ //catches the -l as part of query, detailed list
-                            currDirPtr->ls_l();
+                            currDirPtr->ls_l(*currUserPtr);
                         }else{
                             currDirPtr->ls(); //basic ls, tabbed
                         }
@@ -93,7 +100,7 @@ int main(){
                                      << ": file or directory exists" 
                                      << endl;
                             }else{
-                                currDirPtr->mkdir(query[1]);
+                                currDirPtr->mkdir(query[1], *currUserPtr);
                             }
                         }else{
                             if(query[0] == "touch"){ //create a file. dummy obj
@@ -109,7 +116,7 @@ int main(){
                                          << ": directory exists" 
                                          << endl;
                                 }else{
-                                    currDirPtr->touch(query[1]);
+                                    currDirPtr->touch(query[1], *currUserPtr);
                                 }
                             }else{
                                 if(query[0] == "rmdir"){ //remove a directory, needs to call destructor. avoid mem leak
@@ -214,9 +221,13 @@ int main(){
                                                         }
                                                     }
                                                 }else{
-                                                cout << "-mash: " 
-                                                     << query[0]
-                                                     << ": command not found\n";
+                                                    if(query[0] == "whoami"){
+                                                        cout << currUserPtr->getUserName() << '\n';
+                                                    }else{
+                                                        cout << "-mash: " 
+                                                             << query[0]
+                                                             << ": command not found\n";
+                                                    }
                                                 }
                                             }
                                         }

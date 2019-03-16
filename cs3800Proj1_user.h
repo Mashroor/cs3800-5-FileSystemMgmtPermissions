@@ -9,18 +9,23 @@
 #include<string>
 #include<ctime>
 #include<vector>
+#include "cs3800Proj1_group.h"
 
 using namespace std;
 
-class group{
+class user{
     private:
         //inner properties of user class
         string userName;
-        string permission;
         vector<group> groupVect;
 
     public:
+        user(string name);
 
+        string getUserName() const{return userName;}
+        vector<group> getGroupVector() const{return groupVect;}
+
+        void addGroup(string groupName);
 };
 
 #endif

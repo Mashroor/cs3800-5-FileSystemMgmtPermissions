@@ -4,9 +4,11 @@
 #include "cs3800Proj1_directory.h"
 using namespace std;
 
-directory::directory(string name, directory &newParent){
+directory::directory(string name, directory &newParent, user &dirOwner){
             directoryName = name;
             parent = &newParent;
+            userName = dirOwner.getUserName();
+            groupName = dirOwner.getGroupVector()[0].getGroupName();
             if (parent != nullptr){
                 path = parent->getPath() + '/' + directoryName;
             }
@@ -87,22 +89,44 @@ void directory::ls(){ //this function is just a pretty print
         }
     cout << endl;
 }
-void directory::ls_l(){ //a detailed pretty print. Not special
-    for (int i = 0; i < innerDirectories.size(); i++){
-        cout << 'd'
-             << innerDirectories[i]->getPermissions() << "\t"
-             << innerDirectories[i]->getUserName() << "\t"
-             << innerDirectories[i]->getFileSize() << "\t"
-             << innerDirectories[i]->getTimestamp() << "\t"
-             << BOLDCYAN << innerDirectories[i]->getDirectoryName() << RESET << '/' << "\n";
+void directory::ls_l(user owner){ //a detailed pretty print. Not special
+    string tempDirGroup;
+    for(int i = 0; i <innerDirectories.size(); i++){
+        for(int j = 0;j < owner.getGroupVector().size();j++){
+            if(innerDirectories[i]->getGroupName() == owner.getGroupVector()[j].getGroupName()){
+                tempDirGroup = owner.getGroupVector()[j].getGroupName();
+            }
+        }
+    }
+    string tempFileGroup;
+    for(int i = 0; i <innerFiles.size(); i++){
+        for(int j = 0;j < owner.getGroupVector().size();j++){
+            if(innerFiles[i].getGroupName() == owner.getGroupVector()[j].getGroupName()){
+                tempFileGroup = owner.getGroupVector()[j].getGroupName();
+            }
+        }
+    }
+    for(int i = 0; i < innerDirectories.size(); i++){
+        if((owner.getUserName() == innerDirectories[i]->getUserName() && innerDirectories[i]->getPermissions()[0] == 'r') || ((tempDirGroup == innerDirectories[i]->getGroupName() && innerDirectories[i]->getPermissions()[3] == 'r'))){
+            cout << 'd'
+                << innerDirectories[i]->getPermissions() << "\t"
+                << innerDirectories[i]->getUserName() << "\t"
+                << innerDirectories[i]->getGroupName() << "\t"
+                << innerDirectories[i]->getFileSize() << "\t"
+                << innerDirectories[i]->getTimestamp() << "\t"
+                << BOLDCYAN << innerDirectories[i]->getDirectoryName() << RESET << '/' << "\n";
+            }
         }
     for (int i = 0; i < innerFiles.size(); i++){
-        cout << '-'
-             << innerFiles[i].getPermissions() << "\t"
-             << innerFiles[i].getUserName() << "\t"
-             << innerFiles[i].getFileSize() << "\t"
-             << innerFiles[i].getTimestamp() << "\t"
-             << innerFiles[i].getFileName() << "\n";
+        if((owner.getUserName() == innerFiles[i].getUserName() && innerFiles[i].getPermissions()[0] == 'r') || ((tempFileGroup == innerFiles[i].getGroupName() && innerFiles[i].getPermissions()[3] == 'r'))){
+            cout << '-'
+                << innerFiles[i].getPermissions() << "\t"
+                << innerFiles[i].getUserName() << "\t"
+                << innerFiles[i].getGroupName() << "\t"
+                << innerFiles[i].getFileSize() << "\t"
+                << innerFiles[i].getTimestamp() << "\t"
+                << innerFiles[i].getFileName() << "\n";
+            }
         }
 }
 void directory::chmod(string permCode, string dirName){
@@ -119,24 +143,24 @@ void directory::chmod(string permCode, string dirName){
         }
     }    
 }
-void directory::mkdir(string newDirName){
+void directory::mkdir(string newDirName, user dirOwner){
     for(int i = 0; i < innerDirectories.size(); i++){ //check existance first
         if(innerDirectories[i]->getDirectoryName() == newDirName){
             cout << "mkdir: " << newDirName << ": File exists\n"; 
             return;
         }
     }    
-    directory* newDir = new directory(newDirName, *this); //ALLOCATING DATA HERE. MAKE SURE TO DELETE WHEN DEREF
+    directory* newDir = new directory(newDirName, *this, dirOwner); //ALLOCATING DATA HERE. MAKE SURE TO DELETE WHEN DEREF
     innerDirectories.push_back(newDir);
 }
-void directory::touch(string newFileName){
+void directory::touch(string newFileName, user fileOwner){
     for(int i = 0; i < innerFiles.size(); i++){ //update timestamp if existing
         if(innerFiles[i].getFileName() == newFileName){
             innerFiles[i].setTimestamp();
             return;
         }
     }
-    file newFile(newFileName); //create a new file
+    file newFile(newFileName, fileOwner); //create a new file
     innerFiles.push_back(newFile);
     return;
 }

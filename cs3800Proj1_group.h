@@ -16,11 +16,10 @@ class group{
     private:
         //inner properties of group class
         string groupName;
-        string permission;
-        vector<string> groupMembers;
 
     public:
-
+        group(string name);
+        string getGroupName() const{return groupName;}
 };
 
 #endif

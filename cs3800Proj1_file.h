@@ -8,6 +8,8 @@
 #include<cstring>
 #include<string>
 #include<ctime>
+#include "cs3800Proj1_user.h"
+#include "cs3800Proj1_group.h"
 
 using namespace std;
 
@@ -16,16 +18,18 @@ class file{
         //inner properties of file class
         string permissions;
         string userName;
+        string groupName;
         int fileSize;
         string timestamp;
         string path;
         string fileName;
     public:
         //constructor, only used in touch, no need for destructor since new mem not allocated
-        file(string name);
+        file(string name, user owner);
         //getters, returns any values in the private section
         string getPermissions() const{return permissions;}
         string getUserName() const{return userName;}
+        string getGroupName() const{return groupName;}
         int getFileSize() const{return fileSize;}
         string getTimestamp() const{return timestamp;}
         string getFileName() const{return fileName;}

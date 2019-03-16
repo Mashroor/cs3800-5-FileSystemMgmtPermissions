@@ -4,12 +4,13 @@
 #include "cs3800Proj1_file.h"
 using namespace std;
 
-file::file(string name){
+file::file(string name, user owner){
             //set defaults for file. nothing special
             fileName = name;
             path = path + name + "/";
+            groupName = owner.getGroupVector()[0].getGroupName();
+            userName = owner.getUserName();
             setTimestamp();
-            userName = "user";
             fileSize = 1024; //dummy variable. Only for printing
             permissions = "rwxrwxrwx";
 }

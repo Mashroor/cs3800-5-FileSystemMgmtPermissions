@@ -3,3 +3,7 @@
 //Group class, definititons and code
 #include "cs3800Proj1_group.h"
 using namespace std;
+
+group::group(string name){
+    groupName = name;
+}

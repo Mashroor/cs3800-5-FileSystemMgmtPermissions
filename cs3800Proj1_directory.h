@@ -11,6 +11,7 @@
 #include <ctime>
 #include <iostream>
 #include "cs3800Proj1_file.h"
+#include "cs3800Proj1_user.h"
 
 using namespace std;
 
@@ -32,12 +33,13 @@ class directory{
 
     public:
         directory(): parent(nullptr) {}; //used in mkdir(), to allocate a new directory obj
-        directory(string name, directory &newParent); //used for any time a diretory is made
+        directory(string name, directory &newParent, user &dirOwner); //used for any time a diretory is made
         ~directory(); //since making a new directory, need a way to deref, avoid mem leaking
         
         //getters, these will return any values in private section
         string getPermissions() const{return permissions;}
         string getUserName() const{return userName;}
+        string getGroupName() const{return groupName;}
         int getFileSize()const{return fileSize;}
         string getTimestamp() const{return timestamp;}
         string getPath() const{return path;}
@@ -75,7 +77,7 @@ class directory{
         //Func: ls_l()
         //Pre: Directory object should be initialized
         //Post: Print the current directory contents and details to screen
-        void ls_l();
+        void ls_l(user owner);
         //Func: chmod (string0, string1)
         //Pre: Directory should take in a permission code, and directory name to act on
         //Post: Set permission variable using setPermission()
@@ -83,11 +85,11 @@ class directory{
         //Func:mkdir(string)
         //Pre: Directory should take in the name of the directory to be created
         //Post: Creates a new directory and stores it in the directory vector
-        void mkdir(string newDirName);
+        void mkdir(string newDirName, user dirOwner);
         //Func: touch(string)
         //Pre: Directory should take in the name of a file to be created, that is not already created
         //Post: File should be created and stored in the files vector
-        void touch(string newFileName);
+        void touch(string newFileName, user fileOwner);
         //Func: rmdir(string)
         //Pre: Directory should have other directories within its directory vector
         //Post: Directory of name <dirToDel> will be removed and de-allocated from memory
