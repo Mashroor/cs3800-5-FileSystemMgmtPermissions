@@ -16,7 +16,6 @@ directory::directory(string name, directory &newParent, user &dirOwner){
                 path = directoryName;
             }
             setTimestamp();
-            userName = "user"; //arbitrary value, not really important other than printing
             fileSize = 1024; //arbitrary value, not really important other than printing
             permissions = "rwxrwxrwx";
 }

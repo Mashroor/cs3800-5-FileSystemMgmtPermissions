@@ -241,9 +241,9 @@ int main(){
                                                                     }
                                                                 }
                                                                 if(found){
-                                                                    cout << "group "
+                                                                    cout << "groupadd: group '"
                                                                          << query[1]
-                                                                         << " already exists.\n";
+                                                                         << "' already exists\n";
                                                                 }else{
                                                                     if(query.size() != 2){
                                                                         cout << "-mash: groupadd"  
