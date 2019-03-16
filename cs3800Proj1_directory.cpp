@@ -80,13 +80,33 @@ directory* directory::cd(string objName, directory* newParent){
 void directory::pwd(){ //kind of redundant, but it spits out a path
     cout << getPath() + '/' << endl;
 }
-void directory::ls(){ //this function is just a pretty print
+void directory::ls(user owner){ //this function is just a pretty print
+    string tempDirGroup;
+    for(int i = 0; i <innerDirectories.size(); i++){
+        for(int j = 0;j < owner.getGroupVector().size();j++){
+            if(innerDirectories[i]->getGroupName() == owner.getGroupVector()[j].getGroupName()){
+                tempDirGroup = owner.getGroupVector()[j].getGroupName();
+            }
+        }
+    }
+    string tempFileGroup;
+    for(int i = 0; i <innerFiles.size(); i++){
+        for(int j = 0;j < owner.getGroupVector().size();j++){
+            if(innerFiles[i].getGroupName() == owner.getGroupVector()[j].getGroupName()){
+                tempFileGroup = owner.getGroupVector()[j].getGroupName();
+            }
+        }
+    }
     for (int i = 0; i < innerDirectories.size(); i++){
-        cout << BOLDCYAN << innerDirectories[i]->getDirectoryName() << RESET <<  '/' << "\t";
+        if((owner.getUserName() == innerDirectories[i]->getUserName() && innerDirectories[i]->getPermissions()[0] == 'r') || ((tempDirGroup == innerDirectories[i]->getGroupName() && innerDirectories[i]->getPermissions()[3] == 'r')) || (innerDirectories[i]->getPermissions()[6] == 'r')){
+            cout << BOLDCYAN << innerDirectories[i]->getDirectoryName() << RESET <<  '/' << "\t";
         }
+    }
     for (int i = 0; i < innerFiles.size(); i++){
-        cout << innerFiles[i].getFileName() << "\t";
+        if((owner.getUserName() == innerFiles[i].getUserName() && innerFiles[i].getPermissions()[0] == 'r') || ((tempFileGroup == innerFiles[i].getGroupName() && innerFiles[i].getPermissions()[3] == 'r') || (innerFiles[i].getPermissions()[6] == 'r'))){
+            cout << innerFiles[i].getFileName() << "\t";
         }
+    }
     cout << endl;
 }
 void directory::ls_l(user owner){ //a detailed pretty print. Not special
@@ -107,7 +127,7 @@ void directory::ls_l(user owner){ //a detailed pretty print. Not special
         }
     }
     for(int i = 0; i < innerDirectories.size(); i++){
-        if((owner.getUserName() == innerDirectories[i]->getUserName() && innerDirectories[i]->getPermissions()[0] == 'r') || ((tempDirGroup == innerDirectories[i]->getGroupName() && innerDirectories[i]->getPermissions()[3] == 'r'))){
+        if((owner.getUserName() == innerDirectories[i]->getUserName() && innerDirectories[i]->getPermissions()[0] == 'r') || ((tempDirGroup == innerDirectories[i]->getGroupName() && innerDirectories[i]->getPermissions()[3] == 'r')) || (innerDirectories[i]->getPermissions()[6] == 'r')){
             cout << 'd'
                 << innerDirectories[i]->getPermissions() << "\t"
                 << innerDirectories[i]->getUserName() << "\t"
@@ -118,7 +138,7 @@ void directory::ls_l(user owner){ //a detailed pretty print. Not special
             }
         }
     for (int i = 0; i < innerFiles.size(); i++){
-        if((owner.getUserName() == innerFiles[i].getUserName() && innerFiles[i].getPermissions()[0] == 'r') || ((tempFileGroup == innerFiles[i].getGroupName() && innerFiles[i].getPermissions()[3] == 'r'))){
+        if((owner.getUserName() == innerFiles[i].getUserName() && innerFiles[i].getPermissions()[0] == 'r') || ((tempFileGroup == innerFiles[i].getGroupName() && innerFiles[i].getPermissions()[3] == 'r')) || (innerFiles[i].getPermissions()[6] == 'r')){
             cout << '-'
                 << innerFiles[i].getPermissions() << "\t"
                 << innerFiles[i].getUserName() << "\t"

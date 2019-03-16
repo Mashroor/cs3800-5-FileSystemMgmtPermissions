@@ -73,7 +73,7 @@ class directory{
         //Func: ls()
         //Pre: Directory object should be initialized
         //Post: Print the current directory contents to the screen
-        void ls();
+        void ls(user owner);
         //Func: ls_l()
         //Pre: Directory object should be initialized
         //Post: Print the current directory contents and details to screen

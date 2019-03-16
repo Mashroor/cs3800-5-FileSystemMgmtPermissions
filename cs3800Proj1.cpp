@@ -79,7 +79,7 @@ int main(){
                         if(query.size()>1 && query[1] == "-l"){ //catches the -l as part of query, detailed list
                             currDirPtr->ls_l(*currUserPtr);
                         }else{
-                            currDirPtr->ls(); //basic ls, tabbed
+                            currDirPtr->ls(*currUserPtr); //basic ls, tabbed
                         }
                     }else{
                         if(query[0] == "mkdir"){ //allocates a new folder in memory, needs deleting in rmdir
@@ -168,13 +168,13 @@ int main(){
                                                 }
                                             }
                                             if(found == false && query.size() == 3 ){ //if file/dir doesn't exist
-                                                cout << "-mash: chmod: " 
+                                                cout << "-mash: chmod:" 
                                                      << query[2] 
                                                      << ": No such file or directory" 
                                                      << endl;
                                             }else{
                                                 if(query.size() < 3 || query.size() > 3){ //invalid definition of chmod
-                                                    cout << "-mash: chmod "  
+                                                    cout << "-mash: chmod"  
                                                         << ": No such definition of chmod" 
                                                         << endl;
                                                 }
@@ -224,9 +224,16 @@ int main(){
                                                     if(query[0] == "whoami"){
                                                         cout << currUserPtr->getUserName() << '\n';
                                                     }else{
-                                                        cout << "-mash: " 
-                                                             << query[0]
-                                                             << ": command not found\n";
+                                                        if(query[0] == "groups"){
+                                                            for(int i = 0; i < currUserPtr->getGroupVector().size(); i++){
+                                                                cout << currUserPtr->getGroupVector()[i].getGroupName() << " ";
+                                                            }
+                                                            cout << endl;
+                                                        }else{
+                                                            cout << "-mash: " 
+                                                                 << query[0]
+                                                                 << ": command not found\n";
+                                                        }
                                                     }
                                                 }
                                             }
