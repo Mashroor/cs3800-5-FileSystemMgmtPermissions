@@ -31,6 +31,9 @@ int main(){
     user defaultUser("user"); //set a default user. of Group default.
     userVect.push_back(defaultUser); //throw this in to keep track of current user. start at default.
     user* currUserPtr = &defaultUser; //pointer to current user. we will be changing this
+    
+    vector<group> groupsVect; // To store groups, and add users to them later on
+    groupsVect.push_back(currUserPtr->getGroupVector()[0]); //store the first group. when creating, add to this
 
     //parsing code for user
     while(control){ 
@@ -230,9 +233,32 @@ int main(){
                                                             }
                                                             cout << endl;
                                                         }else{
-                                                            cout << "-mash: " 
-                                                                 << query[0]
-                                                                 << ": command not found\n";
+                                                            if(query[0] == "groupadd"){
+                                                                found = false;
+                                                                for(int i = 0; i < currUserPtr->getGroupVector().size(); i++){
+                                                                    if(query[1] == currUserPtr->getGroupVector()[i].getGroupName()){
+                                                                        found = true;
+                                                                    }
+                                                                }
+                                                                if(found){
+                                                                    cout << "group "
+                                                                         << query[1]
+                                                                         << " already exists.\n";
+                                                                }else{
+                                                                    if(query.size() != 2){
+                                                                        cout << "-mash: groupadd"  
+                                                                             << ": No such definition of groupadd" 
+                                                                             << endl;
+                                                                    }else{
+                                                                        group newGroup(query[1]);
+                                                                        currUserPtr->getGroupVector().push_back(newGroup);
+                                                                    }
+                                                                }
+                                                            }else{
+                                                                cout << "-mash: " 
+                                                                     << query[0]
+                                                                     << ": command not found\n";
+                                                            }
                                                         }
                                                     }
                                                 }
