@@ -192,12 +192,29 @@ int main(){
                                                         execName.erase(execName.begin());
                                                     }
                                                     found = false;
+                                                    bool perm = true;
+
+
+                                                    string tempFileGroup;
+                                                    for(int i = 0; i < currDirPtr->getDirectoryVect().size(); i++){
+                                                        for(int j = 0;j < currUserPtr->getGroupVector().size();j++){
+                                                            if(currDirPtr->getDirectoryVect()[i]->getGroupName() == currUserPtr->getGroupVector()[j].getGroupName()){
+                                                                tempFileGroup = currUserPtr->getGroupVector()[j].getGroupName();
+                                                            }
+                                                        }
+                                                    }
                                                     for (int i = 0; i < currDirPtr->getFilesSize(); i++){ //find the file here. Search.
-                                                        if(currDirPtr->getFilesVect()[i].getFileName() == execName){
-                                                            cout << execName
-                                                                 << " has been executed."
-                                                                 << endl;
-                                                            found = true;
+                                                        if(currDirPtr->getFilesVect()[i].getFileName() == execName){ //if file is found
+                                                            if((currDirPtr->getFilesVect()[i].getUserName() == currUserPtr->getUserName() && currDirPtr->getFilesVect()[i].getPermissions()[2] == 'x') //if user has permission
+                                                            || (currDirPtr->getFilesVect()[i].getGroupName() == tempFileGroup && currDirPtr->getFilesVect()[i].getPermissions()[5] == 'x')  //if group has permission
+                                                            || (currDirPtr->getFilesVect()[i].getPermissions()[8] == 'x')){ //if other has permission
+                                                                cout << execName
+                                                                    << " has been executed."
+                                                                    << endl;
+                                                                found = true;
+                                                            }else{
+                                                                perm = false;
+                                                            }
                                                         }
                                                     }
                                                     for (int i = 0; i < currDirPtr->getSize(); i++){ //make sure to check directories next, new error message
@@ -216,11 +233,15 @@ int main(){
                                                              << endl;
                                                     }
                                                     else{
-                                                        if(found == false){ //no file to execute
+                                                        if(found == false && perm){ //no file to execute
                                                             cout << "-mash: " 
                                                                 << query[0] 
                                                                 << ": No such file or directory" 
                                                                 << endl;
+                                                        }else{
+                                                            if(!found && !perm){
+                                                                cout << "Permission denied.\n";
+                                                            }
                                                         }
                                                     }
                                                 }else{
@@ -257,23 +278,28 @@ int main(){
                                                             }else{
                                                                 if(query[0] == "useradd"){
                                                                     found = false;
-                                                                    for(int i = 0; i < userVect.size(); i++){
-                                                                        if(query[1] == userVect[i].getUserName()){
-                                                                            found = true;
-                                                                        }
-                                                                    }
-                                                                    if(found && query.size() == 2){
-                                                                        cout << "useradd: user '"
-                                                                             << query[1]
-                                                                             << "' already exists\n";
+
+                                                                    if(query[1] == "-G"){
+                                                                        //TODO
                                                                     }else{
-                                                                        if(query.size() != 2){
-                                                                            cout << "-mash: useradd"  
-                                                                                 << ": No such definition of useradd" 
-                                                                                 << endl;
+                                                                        for(int i = 0; i < userVect.size(); i++){
+                                                                            if(query[1] == userVect[i].getUserName()){
+                                                                                found = true;
+                                                                            }
+                                                                        }
+                                                                        if(found && query.size() == 2){
+                                                                            cout << "useradd: user '"
+                                                                                << query[1]
+                                                                                << "' already exists\n";
                                                                         }else{
-                                                                            user newUser(query[1]);
-                                                                            userVect.push_back(newUser);
+                                                                            if(query.size() != 2){
+                                                                                cout << "-mash: useradd"  
+                                                                                    << ": No such definition of useradd" 
+                                                                                    << endl;
+                                                                            }else{
+                                                                                user newUser(query[1]);
+                                                                                userVect.push_back(newUser);
+                                                                            }
                                                                         }
                                                                     }
                                                                 }else{
@@ -387,11 +413,18 @@ int main(){
                                                                                             << endl;
                                                                                     }
                                                                                 }
-
                                                                             }else{
-                                                                                cout << "-mash: " 
-                                                                                    << query[0]
-                                                                                    << ": command not found\n";
+                                                                                if(query[0] == "chown"){
+                                                                                    //TODO
+                                                                                }else{
+                                                                                    if(query[0] == "chgrp"){
+                                                                                        //TODO
+                                                                                    }else{
+                                                                                        cout << "-mash: " 
+                                                                                            << query[0]
+                                                                                            << ": command not found\n";
+                                                                                    }
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
