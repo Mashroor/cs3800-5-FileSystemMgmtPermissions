@@ -368,9 +368,31 @@ int main(){
                                                                                 }
                                                                             }
                                                                         }else{
-                                                                            cout << "-mash: " 
-                                                                                << query[0]
-                                                                                << ": command not found\n";
+                                                                            if(query[0] == "switchto"){
+                                                                                found = false;
+                                                                                for(int i = 0; i < userVect.size();i++){
+                                                                                    if(userVect[i].getUserName() == query[1]){
+                                                                                        currUserPtr = &userVect[i];
+                                                                                        found = true;
+                                                                                    }
+                                                                                }
+                                                                                if(!found && query.size() == 2){
+                                                                                    cout << "switchto: user '"
+                                                                                        << query[1]
+                                                                                        << "' does not exist\n";
+                                                                                }else{
+                                                                                    if(query.size() != 2){
+                                                                                        cout << "-mash: switchto"  
+                                                                                            << ": No such definition of switchto" 
+                                                                                            << endl;
+                                                                                    }
+                                                                                }
+
+                                                                            }else{
+                                                                                cout << "-mash: " 
+                                                                                    << query[0]
+                                                                                    << ": command not found\n";
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
