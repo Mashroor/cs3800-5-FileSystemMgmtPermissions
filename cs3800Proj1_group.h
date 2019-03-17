@@ -18,8 +18,10 @@ class group{
         string groupName;
 
     public:
+        group(): groupName("null") {};
         group(string name);
         string getGroupName() const{return groupName;}
+        string setGroupName(string newName){groupName = newName;}
 };
 
 #endif

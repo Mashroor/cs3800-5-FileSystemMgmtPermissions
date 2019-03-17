@@ -251,13 +251,118 @@ int main(){
                                                                              << endl;
                                                                     }else{
                                                                         group newGroup(query[1]);
-                                                                        currUserPtr->getGroupVector().push_back(newGroup);
+                                                                        groupsVect.push_back(newGroup);
                                                                     }
                                                                 }
+
+                                                                for(int i = 0; i < groupsVect.size(); i++){
+                                                                    cout << groupsVect[i].getGroupName() << endl;
+                                                                }
                                                             }else{
-                                                                cout << "-mash: " 
-                                                                     << query[0]
-                                                                     << ": command not found\n";
+                                                                if(query[0] == "useradd"){
+                                                                    found = false;
+                                                                    for(int i = 0; i < userVect.size(); i++){
+                                                                        if(query[1] == userVect[i].getUserName()){
+                                                                            found = true;
+                                                                        }
+                                                                    }
+                                                                    if(found && query.size() == 2){
+                                                                        cout << "useradd: user '"
+                                                                             << query[1]
+                                                                             << "' already exists\n";
+                                                                    }else{
+                                                                        if(query.size() != 2){
+                                                                            cout << "-mash: useradd"  
+                                                                                 << ": No such definition of useradd" 
+                                                                                 << endl;
+                                                                        }else{
+                                                                            user newUser(query[1]);
+                                                                            userVect.push_back(newUser);
+                                                                        }
+                                                                    }
+                                                                }else{
+                                                                    if(query[0] == "userdel"){
+                                                                        if(query[1] == "-G"){
+                                                                            found = false;
+                                                                            for(int i = 0; i < userVect.size(); i++){
+                                                                                for(int j = 0; j < userVect[i].getGroupVector().size(); j++){
+                                                                                    if(query[1] == userVect[i].getGroupVector()[j].getGroupName() && query[2] == userVect[i].getUserName()){
+                                                                                        userVect[i].getGroupVector().erase(userVect[i].getGroupVector().begin()+j);
+                                                                                        found = true;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        if(found == false && query.size() == 3){
+                                                                            cout << "userdel -G: user '"
+                                                                                 << query[1]
+                                                                                 << "' is not a part of specified group\n";
+                                                                        }else{
+                                                                            if(query.size() != 3){
+                                                                                cout << "-mash: userdel"  
+                                                                                     << ": No such definition of userdel" 
+                                                                                     << endl;
+                                                                            }
+                                                                        }
+                                                                        }else{
+                                                                            found = false;
+                                                                            for(int i = 0; i < userVect.size(); i++){
+                                                                                if(query[1] == userVect[i].getUserName()){
+                                                                                    userVect.erase(userVect.begin()+i);
+                                                                                    found = true;
+                                                                                }
+                                                                            }
+                                                                            if(found == false && query.size() == 2){
+                                                                                cout << "userdel: user '"
+                                                                                    << query[1]
+                                                                                    << "' does not exist\n";
+                                                                            }else{
+                                                                                if(query.size() != 2){
+                                                                                    cout << "-mash: userdel"  
+                                                                                        << ": No such definition of userdel" 
+                                                                                        << endl;
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }else{
+                                                                        if(query[0] == "usermod" && query[1] == "-a" && query[2] == "-G" ){
+                                                                            
+                                                                            // found = false;
+                                                                            // string groupToAdd;
+                                                                            // group newGroup;
+
+                                                                            // for(int i = 0; i < groupsVect.size(); i++){ //find if group exists
+                                                                            //     if(query[3] == groupsVect[i].getGroupName()){
+                                                                            //         groupToAdd = groupsVect[i].getGroupName(); //set name
+                                                                            //         newGroup.setGroupName(groupToAdd); // change name of newgroup.
+                                                                            //         cout << "added!\n";
+                                                                            //     }
+                                                                            // }
+                                                                            // for(int i = 0; i < currUserPtr->getGroupVector().size(); i++){
+                                                                            //     if(currUserPtr->getGroupVector()[i].getGroupName() == query[3]){
+                                                                                    
+                                                                            //         currUserPtr->getGroupVector().push_back(newGroup);
+                                                                            //         found = true;
+                                                                            //         cout << "put it in the group vector!\n";
+                                                                            //     }
+                                                                            // }
+                                                                            // if(!found && query.size() == 4){
+                                                                            //     cout << "usermod: group '"
+                                                                            //          << query[3]
+                                                                            //          << "' does not exist\n";
+                                                                            // }else{
+                                                                            //     if(query.size() != 4){
+                                                                            //         cout << "-mash: usermod"  
+                                                                            //              << ": No such definition of usermod" 
+                                                                            //              << endl;
+                                                                            //     }
+                                                                            // }
+                                                                        }else{
+                                                                            cout << "-mash: " 
+                                                                                << query[0]
+                                                                                << ": command not found\n";
+                                                                        }
+                                                                    }
+                                                                }
                                                             }
                                                         }
                                                     }
