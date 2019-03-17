@@ -78,6 +78,7 @@ directory* directory::cd(string objName, directory* newParent){
 }
 void directory::pwd(){ //kind of redundant, but it spits out a path
     cout << getPath() + '/' << endl;
+    return;
 }
 void directory::ls(user owner){ //this function is just a pretty print
     string tempDirGroup;

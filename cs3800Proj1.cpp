@@ -37,7 +37,7 @@ int main(){
 
     //parsing code for user
     while(control){ 
-    cout << BOLDCYAN << currUserPtr->getUserName() << ":~" << RESET << currDirPtr->getPath() << "$ "; //to emulate linux, print this. user is not an actual obj or anything
+    cout << BOLDCYAN << currUserPtr->getUserName() << ":~" << RESET << currDirPtr->getPath() << "$ "; //to emulate linux, print this.
     getline(cin, input);
     istringstream ss(input);
 	string token;
@@ -254,10 +254,6 @@ int main(){
                                                                         groupsVect.push_back(newGroup);
                                                                     }
                                                                 }
-
-                                                                for(int i = 0; i < groupsVect.size(); i++){
-                                                                    cout << groupsVect[i].getGroupName() << endl;
-                                                                }
                                                             }else{
                                                                 if(query[0] == "useradd"){
                                                                     found = false;
@@ -326,36 +322,51 @@ int main(){
                                                                     }else{
                                                                         if(query[0] == "usermod" && query[1] == "-a" && query[2] == "-G" ){
                                                                             
-                                                                            // found = false;
-                                                                            // string groupToAdd;
-                                                                            // group newGroup;
+                                                                            bool alreadyExists = false;
+                                                                            bool foundGroup = false;
+                                                                            bool inUserGroups = false;
+                                                                            found = false;
+                                                                            string groupToAdd;
+                                                                            group newGroup; //to be added to current user
 
-                                                                            // for(int i = 0; i < groupsVect.size(); i++){ //find if group exists
-                                                                            //     if(query[3] == groupsVect[i].getGroupName()){
-                                                                            //         groupToAdd = groupsVect[i].getGroupName(); //set name
-                                                                            //         newGroup.setGroupName(groupToAdd); // change name of newgroup.
-                                                                            //         cout << "added!\n";
-                                                                            //     }
-                                                                            // }
-                                                                            // for(int i = 0; i < currUserPtr->getGroupVector().size(); i++){
-                                                                            //     if(currUserPtr->getGroupVector()[i].getGroupName() == query[3]){
-                                                                                    
-                                                                            //         currUserPtr->getGroupVector().push_back(newGroup);
-                                                                            //         found = true;
-                                                                            //         cout << "put it in the group vector!\n";
-                                                                            //     }
-                                                                            // }
-                                                                            // if(!found && query.size() == 4){
-                                                                            //     cout << "usermod: group '"
-                                                                            //          << query[3]
-                                                                            //          << "' does not exist\n";
-                                                                            // }else{
-                                                                            //     if(query.size() != 4){
-                                                                            //         cout << "-mash: usermod"  
-                                                                            //              << ": No such definition of usermod" 
-                                                                            //              << endl;
-                                                                            //     }
-                                                                            // }
+                                                                            for(int i = 0; i < groupsVect.size(); i++){ //check existence in group vector. bool true if it is
+                                                                                if(query[3] == groupsVect[i].getGroupName()){
+                                                                                    alreadyExists = true;
+                                                                                }
+                                                                            }
+                                                                            for(int i = 0; i < groupsVect.size(); i++){ 
+                                                                                if(query[3] == groupsVect[i].getGroupName() && alreadyExists){ //if it exist, we can create a new object
+                                                                                    groupToAdd = groupsVect[i].getGroupName(); //set name
+                                                                                    newGroup.setGroupName(groupToAdd); // change name of newgroup. We can use this now, to put in user groups 
+                                                                                    foundGroup = true;  
+                                                                                }
+                                                                            }
+                                                                            for(int i = 0; i < currUserPtr->getGroupVector().size();i++){ //check if its already in the user groups
+                                                                                if(query[3] == currUserPtr->getGroupVector()[i].getGroupName()){
+                                                                                    inUserGroups = true;
+                                                                                }
+                                                                            }
+                                                                            if(foundGroup && !inUserGroups){ //if it is a real group, and the user does not have it, add it.
+                                                                                currUserPtr->getGroupVector().push_back(newGroup);
+                                                                                found = true;
+                                                                            }
+                                                                            if(!foundGroup && query.size() == 4){
+                                                                                cout << "usermod: group '"
+                                                                                        << query[3]
+                                                                                        << "' does not exist\n";
+                                                                            }else{
+                                                                                if(!found && query.size() == 4){
+                                                                                    cout << "usermod: User is already in group '"
+                                                                                         << query[3]
+                                                                                         << "'\n";
+                                                                                }else{
+                                                                                    if(query.size() != 4){
+                                                                                        cout << "-mash: usermod"  
+                                                                                            << ": No such definition of usermod" 
+                                                                                            << endl;
+                                                                                    }
+                                                                                }
+                                                                            }
                                                                         }else{
                                                                             cout << "-mash: " 
                                                                                 << query[0]

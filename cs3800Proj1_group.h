@@ -19,9 +19,10 @@ class group{
 
     public:
         group(): groupName("null") {};
+        group( const group& source) : groupName(source.groupName){}
         group(string name);
         string getGroupName() const{return groupName;}
-        string setGroupName(string newName){groupName = newName;}
+        void setGroupName(string newName){groupName = newName;}
 };
 
 #endif

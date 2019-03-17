@@ -23,7 +23,7 @@ class user{
         user(string name);
 
         string getUserName() const{return userName;}
-        vector<group> getGroupVector() const{return groupVect;}
+        vector<group>& getGroupVector() {return groupVect;}
 
         void addGroup(string groupName);
 };
