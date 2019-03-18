@@ -62,6 +62,14 @@ class directory{
         //Pre: A directory must be the calling object. a length 3, string of a number should be passed in.
         //Post: Permission will be set according the the string passed in.
         void setPermissions(string permCode);
+        //
+        //
+        //
+        void setUserName(string newName){userName = newName;}
+        //
+        //
+        //
+        void setGroupName(string newName){groupName = newName;}
         //Func: cd(string, directory*)
         //Pre: A directory should take in a name string along with a pointer to a new parent
         //Post: parent will be set for the old object, passed name will be the new currDirPtr

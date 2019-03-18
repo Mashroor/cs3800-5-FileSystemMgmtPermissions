@@ -42,7 +42,14 @@ class file{
         //Pre: A file must be the calling object, the permission must be a length 3 string, of only numbers
         //Post: The permission variable will be set to a permission string
         void setPermissions(string PermCode);
-        //this obj does not need any extra functions, since this is only here as a dummy obj
+        //
+        //
+        //
+        void setUserName(string newName){userName = newName;}
+        //
+        //
+        //
+        void setGroupName(string newName){groupName = newName;}
 };
 
 #endif

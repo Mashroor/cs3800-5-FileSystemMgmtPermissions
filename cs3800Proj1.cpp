@@ -30,7 +30,7 @@ int main(){
     vector<user> userVect; //store all users in this. we can move around in this.
     user defaultUser("user"); //set a default user. of Group default.
     userVect.push_back(defaultUser); //throw this in to keep track of current user. start at default.
-    user* currUserPtr = &defaultUser; //pointer to current user. we will be changing this
+    user* currUserPtr = &defaultUser; //pointer to current user in vector. we will be changing this
     
     vector<group> groupsVect; // To store groups, and add users to them later on
     groupsVect.push_back(currUserPtr->getGroupVector()[0]); //store the first group. when creating, add to this
@@ -299,6 +299,9 @@ int main(){
                                                                             }else{
                                                                                 user newUser(query[1]);
                                                                                 userVect.push_back(newUser);
+                                                                                for(int i = 0; i < userVect.size(); i++){
+                                                                                    cout << userVect[i].getUserName() << endl;
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
@@ -306,25 +309,44 @@ int main(){
                                                                     if(query[0] == "userdel"){
                                                                         if(query[1] == "-G"){
                                                                             found = false;
+                                                                            // for(int i = 0; i < userVect.size(); i++){
+                                                                            //     for(int j = 0; j < userVect[i].getGroupVector().size(); j++){
+                                                                            //         if(query[2] == userVect[i].getGroupVector()[j].getGroupName() && query[3] == userVect[i].getUserName()){
+                                                                                        
+                                                                            //             userVect[i].getGroupVector().erase(userVect[i].getGroupVector().begin()+j); //removes from overall users on system
+                                                                            //             found = true;
+                                                                                        
+                                                                            //             cout << "I found it!\n";
+                                                                            //             cout << userVect[i].getGroupVector().size() << endl;
+                                                                            //         }
+                                                                            //     }
+                                                                            // }
+
                                                                             for(int i = 0; i < userVect.size(); i++){
-                                                                                for(int j = 0; j < userVect[i].getGroupVector().size(); j++){
-                                                                                    if(query[1] == userVect[i].getGroupVector()[j].getGroupName() && query[2] == userVect[i].getUserName()){
-                                                                                        userVect[i].getGroupVector().erase(userVect[i].getGroupVector().begin()+j);
-                                                                                        found = true;
-                                                                                    }
+                                                                                //if(query[3] == userVect[i].getUserName()){
+                                                                                    cout << "Found the user!\n";
+                                                                                    for(int j = 0; j < userVect[i].getGroupVector().size(); j++){
+                                                                                        // if(query[2] == userVect[i].getGroupVector()[j].getGroupName()){
+                                                                                        //     // userVect[i].getGroupVector().erase(userVect[i].getGroupVector().begin()+j);
+                                                                                        //     cout << userVect[i].getGroupVector()[j].getGroupName();
+                                                                                        //     cout << "found the group! He's Gone!\n";
+                                                                                        //     found = true;
+                                                                                        // }
+                                                                                        cout << userVect[i].getGroupVector()[j].getGroupName() << endl;
+                                                                                   // }
                                                                                 }
                                                                             }
-                                                                        if(found == false && query.size() == 3){
-                                                                            cout << "userdel -G: user '"
-                                                                                 << query[1]
-                                                                                 << "' is not a part of specified group\n";
-                                                                        }else{
-                                                                            if(query.size() != 3){
-                                                                                cout << "-mash: userdel"  
-                                                                                     << ": No such definition of userdel" 
-                                                                                     << endl;
+                                                                            if(found == false && query.size() == 4){
+                                                                                cout << "userdel -G: user '"
+                                                                                    << query[3]
+                                                                                    << "' is not a part of specified group\n";
+                                                                            }else{
+                                                                                if(query.size() != 4){
+                                                                                    cout << "-mash: userdel"  
+                                                                                        << ": No such definition of userdel" 
+                                                                                        << endl;
+                                                                                }
                                                                             }
-                                                                        }
                                                                         }else{
                                                                             found = false;
                                                                             for(int i = 0; i < userVect.size(); i++){
@@ -332,6 +354,9 @@ int main(){
                                                                                     userVect.erase(userVect.begin()+i);
                                                                                     found = true;
                                                                                 }
+                                                                            }
+                                                                            for(int i = 0; i < userVect.size(); i++){
+                                                                                cout << userVect[i].getUserName() <<endl;
                                                                             }
                                                                             if(found == false && query.size() == 2){
                                                                                 cout << "userdel: user '"
@@ -348,23 +373,19 @@ int main(){
                                                                     }else{
                                                                         if(query[0] == "usermod" && query[1] == "-a" && query[2] == "-G" ){
                                                                             
-                                                                            bool alreadyExists = false;
+                                                                            // bool alreadyExists = false;
                                                                             bool foundGroup = false;
                                                                             bool inUserGroups = false;
                                                                             found = false;
                                                                             string groupToAdd;
                                                                             group newGroup; //to be added to current user
 
-                                                                            for(int i = 0; i < groupsVect.size(); i++){ //check existence in group vector. bool true if it is
+                                                                            for(int i = 0; i < groupsVect.size(); i++){ //search for group in groupVect. Make if found.
                                                                                 if(query[3] == groupsVect[i].getGroupName()){
-                                                                                    alreadyExists = true;
-                                                                                }
-                                                                            }
-                                                                            for(int i = 0; i < groupsVect.size(); i++){ 
-                                                                                if(query[3] == groupsVect[i].getGroupName() && alreadyExists){ //if it exist, we can create a new object
+                                                                                    // alreadyExists = true;
                                                                                     groupToAdd = groupsVect[i].getGroupName(); //set name
                                                                                     newGroup.setGroupName(groupToAdd); // change name of newgroup. We can use this now, to put in user groups 
-                                                                                    foundGroup = true;  
+                                                                                    foundGroup = true;
                                                                                 }
                                                                             }
                                                                             for(int i = 0; i < currUserPtr->getGroupVector().size();i++){ //check if its already in the user groups
@@ -375,6 +396,12 @@ int main(){
                                                                             if(foundGroup && !inUserGroups){ //if it is a real group, and the user does not have it, add it.
                                                                                 currUserPtr->getGroupVector().push_back(newGroup);
                                                                                 found = true;
+
+                                                                                for(int i = 0; i < currUserPtr->getGroupVector().size(); i++){
+                                                                                    cout << currUserPtr->getGroupVector()[i].getGroupName() << endl;
+                                                                                }
+                                                                                cout << currUserPtr->getGroupVector().size() << endl;
+                                                                                cout << groupsVect.size() << endl;
                                                                             }
                                                                             if(!foundGroup && query.size() == 4){
                                                                                 cout << "usermod: group '"
@@ -415,7 +442,45 @@ int main(){
                                                                                 }
                                                                             }else{
                                                                                 if(query[0] == "chown"){
-                                                                                    //TODO
+                                                                                    bool dirFound = false;
+                                                                                    bool fileFound = false;
+                                                                                    found = false;
+
+                                                                                    for(int i = 0; i < userVect.size(); i++){ //search if user exists
+                                                                                        if(query[1] == userVect[i].getUserName()){
+                                                                                            found = true;
+                                                                                        }
+                                                                                    }
+                                                                                    for (int i = 0; i < currDirPtr->getSize(); i++){ //change user of directory
+                                                                                        if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[2]){
+                                                                                            dirFound = true;
+                                                                                            currDirPtr->getDirectoryVect()[i]->setUserName(currUserPtr->getUserName());
+                                                                                            cout << "changed the owner!\n";
+                                                                                        }
+                                                                                    }
+                                                                                    for (int i = 0; i < currDirPtr->getFilesSize(); i++){ //change owner of file
+                                                                                        if(currDirPtr->getFilesVect()[i].getFileName() == query[2]){
+                                                                                            fileFound = true;
+                                                                                            currDirPtr->getFilesVect()[i].setUserName(currUserPtr->getUserName());
+                                                                                            cout << "changed the owner!\n";
+                                                                                        }
+                                                                                    }
+
+                                                                                    if(found && query.size() == 3 ){
+                                                                                        if(dirFound){
+                                                                                            
+
+                                                                                        }else{
+                                                                                            if(fileFound){
+
+
+                                                                                            }
+                                                                                        }
+
+
+                                                                                    }
+
+
                                                                                 }else{
                                                                                     if(query[0] == "chgrp"){
                                                                                         //TODO
