@@ -308,45 +308,7 @@ int main(){
                                                                 }else{
                                                                     if(query[0] == "userdel"){
                                                                         if(query[1] == "-G"){
-                                                                            found = false;
-                                                                            // for(int i = 0; i < userVect.size(); i++){
-                                                                            //     for(int j = 0; j < userVect[i].getGroupVector().size(); j++){
-                                                                            //         if(query[2] == userVect[i].getGroupVector()[j].getGroupName() && query[3] == userVect[i].getUserName()){
-                                                                                        
-                                                                            //             userVect[i].getGroupVector().erase(userVect[i].getGroupVector().begin()+j); //removes from overall users on system
-                                                                            //             found = true;
-                                                                                        
-                                                                            //             cout << "I found it!\n";
-                                                                            //             cout << userVect[i].getGroupVector().size() << endl;
-                                                                            //         }
-                                                                            //     }
-                                                                            // }
-
-                                                                            for(int i = 0; i < userVect.size(); i++){
-                                                                                //if(query[3] == userVect[i].getUserName()){
-                                                                                    cout << "Found the user!\n";
-                                                                                    for(int j = 0; j < userVect[i].getGroupVector().size(); j++){
-                                                                                        // if(query[2] == userVect[i].getGroupVector()[j].getGroupName()){
-                                                                                        //     // userVect[i].getGroupVector().erase(userVect[i].getGroupVector().begin()+j);
-                                                                                        //     cout << userVect[i].getGroupVector()[j].getGroupName();
-                                                                                        //     cout << "found the group! He's Gone!\n";
-                                                                                        //     found = true;
-                                                                                        // }
-                                                                                        cout << userVect[i].getGroupVector()[j].getGroupName() << endl;
-                                                                                   // }
-                                                                                }
-                                                                            }
-                                                                            if(found == false && query.size() == 4){
-                                                                                cout << "userdel -G: user '"
-                                                                                    << query[3]
-                                                                                    << "' is not a part of specified group\n";
-                                                                            }else{
-                                                                                if(query.size() != 4){
-                                                                                    cout << "-mash: userdel"  
-                                                                                        << ": No such definition of userdel" 
-                                                                                        << endl;
-                                                                                }
-                                                                            }
+                                                                            //TODO
                                                                         }else{
                                                                             found = false;
                                                                             for(int i = 0; i < userVect.size(); i++){
