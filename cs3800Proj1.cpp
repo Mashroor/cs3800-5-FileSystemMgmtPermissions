@@ -299,15 +299,34 @@ int main(){
                                                                             }else{
                                                                                 user newUser(query[1]);
                                                                                 userVect.push_back(newUser);
-                                                                                for(int i = 0; i < userVect.size(); i++){
-                                                                                    cout << userVect[i].getUserName() << endl;
-                                                                                }
+
                                                                             }
                                                                         }
                                                                     }
                                                                 }else{
                                                                     if(query[0] == "userdel"){
                                                                         if(query[1] == "-G"){
+                                                                            for(int i = 0; i < userVect.size(); i++){
+                                                                                if(query[3] == userVect[i].getUserName()){
+                                                                                    cout << "Found the user!\n";
+                                                                                    for(int j = 0; j < userVect[i].getGroupVector().size(); j++){
+                                                                                        if(query[2] == userVect[i].getGroupVector()[j].getGroupName()){
+                                                                                            userVect[i].getGroupVector().erase(userVect[i].getGroupVector().begin()+j);
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            if(found == false && query.size() == 4){
+                                                                                cout << "userdel -G: user '"
+                                                                                    << query[3]
+                                                                                    << "' is not a part of specified group\n";
+                                                                            }else{
+                                                                                if(query.size() != 4){
+                                                                                    cout << "-mash: userdel"  
+                                                                                        << ": No such definition of userdel" 
+                                                                                        << endl;
+                                                                                }
+                                                                            }
                                                                             //TODO
                                                                         }else{
                                                                             found = false;
@@ -356,14 +375,13 @@ int main(){
                                                                                 }
                                                                             }
                                                                             if(foundGroup && !inUserGroups){ //if it is a real group, and the user does not have it, add it.
-                                                                                currUserPtr->getGroupVector().push_back(newGroup);
-                                                                                found = true;
-
-                                                                                for(int i = 0; i < currUserPtr->getGroupVector().size(); i++){
-                                                                                    cout << currUserPtr->getGroupVector()[i].getGroupName() << endl;
+                                                                                for(int i = 0; i < userVect.size(); i++){
+                                                                                    if(currUserPtr->getUserName() == userVect[i].getUserName()){
+                                                                                        userVect[i].getGroupVector().push_back(newGroup);
+                                                                                        found = true;
+                                                                                    }
                                                                                 }
-                                                                                cout << currUserPtr->getGroupVector().size() << endl;
-                                                                                cout << groupsVect.size() << endl;
+                                                                                // currUserPtr->getGroupVector().push_back(newGroup);
                                                                             }
                                                                             if(!foundGroup && query.size() == 4){
                                                                                 cout << "usermod: group '"
@@ -407,7 +425,6 @@ int main(){
                                                                                     bool dirFound = false;
                                                                                     bool fileFound = false;
                                                                                     found = false;
-
                                                                                     for(int i = 0; i < userVect.size(); i++){ //search if user exists
                                                                                         if(query[1] == userVect[i].getUserName()){
                                                                                             found = true;
@@ -416,36 +433,75 @@ int main(){
                                                                                     for (int i = 0; i < currDirPtr->getSize(); i++){ //change user of directory
                                                                                         if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[2]){
                                                                                             dirFound = true;
-                                                                                            currDirPtr->getDirectoryVect()[i]->setUserName(currUserPtr->getUserName());
-                                                                                            cout << "changed the owner!\n";
+                                                                                            currDirPtr->getDirectoryVect()[i]->setUserName(query[1]);
+                                                                                            cout << query[1] << endl;
                                                                                         }
                                                                                     }
                                                                                     for (int i = 0; i < currDirPtr->getFilesSize(); i++){ //change owner of file
                                                                                         if(currDirPtr->getFilesVect()[i].getFileName() == query[2]){
                                                                                             fileFound = true;
-                                                                                            currDirPtr->getFilesVect()[i].setUserName(currUserPtr->getUserName());
-                                                                                            cout << "changed the owner!\n";
+                                                                                            currDirPtr->getFilesVect()[i].setUserName(query[1]);
                                                                                         }
                                                                                     }
-
-                                                                                    if(found && query.size() == 3 ){
-                                                                                        if(dirFound){
-                                                                                            
-
-                                                                                        }else{
-                                                                                            if(fileFound){
-
-
-                                                                                            }
-                                                                                        }
-
-
+                                                                                    if(found == false){
+                                                                                        cout << "-mash:  "
+                                                                                         << query[2]
+                                                                                         << ": no such file or directory\n";
                                                                                     }
-
-
+                                                                                    if(found && query.size() == 3){
+                                                                                        if(!dirFound && !fileFound){
+                                                                                            cout << "-mash: "
+                                                                                                 << query[2]
+                                                                                                 << ": illegal command\n";
+                                                                                        }
+                                                                                    }else{
+                                                                                        if(query.size() != 3){
+                                                                                        cout << "-mash: chown"  
+                                                                                             << ": No such definition of chmod" 
+                                                                                             << endl;
+                                                                                        }
+                                                                                    }
                                                                                 }else{
                                                                                     if(query[0] == "chgrp"){
-                                                                                        //TODO
+                                                                                        bool dirFound = false;
+                                                                                    bool fileFound = false;
+                                                                                    found = false;
+                                                                                    for(int i = 0; i < userVect.size(); i++){ //search if user exists
+                                                                                        if(query[1] == userVect[i].getUserName()){
+                                                                                            found = true;
+                                                                                        }
+                                                                                    }
+                                                                                    for (int i = 0; i < currDirPtr->getSize(); i++){ //change user of directory
+                                                                                        if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[2]){
+                                                                                            dirFound = true;
+                                                                                            currDirPtr->getDirectoryVect()[i]->setGroupName(query[1]);
+                                                                                            cout << query[1] << endl;
+                                                                                        }
+                                                                                    }
+                                                                                    for (int i = 0; i < currDirPtr->getFilesSize(); i++){ //change owner of file
+                                                                                        if(currDirPtr->getFilesVect()[i].getFileName() == query[2]){
+                                                                                            fileFound = true;
+                                                                                            currDirPtr->getFilesVect()[i].setGroupName(query[1]);
+                                                                                        }
+                                                                                    }
+                                                                                    if(found == false){
+                                                                                        cout << "-mash:  "
+                                                                                         << query[2]
+                                                                                         << ": no such file or directory\n";
+                                                                                    }
+                                                                                    if(found && query.size() == 3){
+                                                                                        if(!dirFound && !fileFound){
+                                                                                            cout << "-mash: "
+                                                                                                 << query[2]
+                                                                                                 << ": illegal command\n";
+                                                                                        }
+                                                                                    }else{
+                                                                                        if(query.size() != 3){
+                                                                                        cout << "-mash: chgrp"  
+                                                                                             << ": No such definition of chmod" 
+                                                                                             << endl;
+                                                                                        }
+                                                                                    }
                                                                                     }else{
                                                                                         cout << "-mash: " 
                                                                                             << query[0]

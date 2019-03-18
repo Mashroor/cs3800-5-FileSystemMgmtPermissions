@@ -47,12 +47,12 @@ class directory{
         int getSize() const{return innerDirectories.size();}
         int getFilesSize() const{return innerFiles.size();}
         directory* getParent() const{return parent;}
-        vector<directory*> getDirectoryVect() const{return innerDirectories;}
-        vector<file> getFilesVect() const{return innerFiles;}
+        vector<directory*>& getDirectoryVect() {return innerDirectories;}
+        vector<file>& getFilesVect() {return innerFiles;}
         
         //Func: setTimestamp()
         //Pre: A directory obj must be acted upon. 
-        //Post: Sets the timestamp varialbe with a string.
+        //Post: Sets the timestamp variable with a string.
         void setTimestamp();
         //Func: setName(string)
         //Pre: A directory must call the function. Must take a string of any length as the parameter.
