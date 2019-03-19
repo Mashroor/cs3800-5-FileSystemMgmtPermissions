@@ -32,7 +32,7 @@ class directory{
         string directoryName;
 
     public:
-        directory(): parent(nullptr) {}; //used in mkdir(), to allocate a new directory obj
+        directory(): parent(nullptr), permissions("rwxrwxrwx"), userName("user"), groupName("users") {}; //used in mkdir(), to allocate a new directory obj
         directory(string name, directory &newParent, user &dirOwner); //used for any time a diretory is made
         ~directory(); //since making a new directory, need a way to deref, avoid mem leaking
         

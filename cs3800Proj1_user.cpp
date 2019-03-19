@@ -6,7 +6,7 @@ using namespace std;
 
 user::user(string name){
     userName = name;
-    group defaultGroup("default"); //add to default group
+    group defaultGroup("users"); //add to default group
     groupVect.push_back(defaultGroup);
 }
 
