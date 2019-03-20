@@ -38,6 +38,7 @@ int main(){
     //parsing code for user
     while(control){ 
     cout << BOLDCYAN << currUserPtr->getUserName() << ":~" << RESET << currDirPtr->getPath() << "$ "; //to emulate linux, print this.
+    
     getline(cin, input);
     istringstream ss(input);
 	string token;
@@ -339,9 +340,57 @@ int main(){
                                                             }else{
                                                                 if(query[0] == "useradd"){
                                                                     found = false;
-
+                                                                    bool foundUser = false;
+                                                                    bool inUserGroups = false;
+                                                                    
                                                                     if(query[1] == "-G"){
-                                                                        //TODO
+                                                                        vector<string> listToAdd;
+
+                                                                        istringstream groupString(query[2]);
+                                                                        string temp;
+                                                                        while(getline(groupString, temp, ',')){
+                                                                            listToAdd.push_back(temp);
+                                                                        }
+
+                                                                        for(int i = 0; i < userVect.size(); i++){ //find user
+                                                                            
+                                                                            if(query[3] == userVect[i].getUserName()){ //if the user exists, then
+
+                                                                                foundUser = true;
+
+                                                                                for(int j = 0; j < listToAdd.size(); j++){ //for each group we want to add
+                                                                                    for(int k = 0; k < groupsVect.size(); k++){ //for each group that exists,
+                                                                                        if(listToAdd[j] == groupsVect[k].getGroupName()){ //if the requested group is in the groups that exist,
+                                                                                            
+                                                                                            group newGroup(listToAdd[j]); //create the temp
+
+                                                                                            // for(int l = 0; l < userVect[i].getGroupVector().size();l++){ //check if its already in the user groups
+                                                                                            //     if(listToAdd[j] == userVect[i].getGroupVector()[l].getGroupName()){
+                                                                                            //         inUserGroups = true;
+                                                                                            //     }
+                                                                                            // }
+                                                                                            if(userVect[i].getUserName() == currUserPtr->getUserName()){
+                                                                                                currUserPtr->getGroupVector().push_back(newGroup);
+                                                                                            }else{
+                                                                                                    userVect[i].getGroupVector().push_back(newGroup);  //add the group
+                                                                                            }
+                                                                                            found = true;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        if(!foundUser && query.size() == 4){
+                                                                            if(!found){
+                                                                                cout << "useradd -G: No such user exists" << endl;
+                                                                            }
+                                                                        }else{
+                                                                            if(query.size() != 4){
+                                                                                cout << "-mash: useradd -G"  
+                                                                                    << ": No such definition of useradd -G" 
+                                                                                    << endl;
+                                                                            }
+                                                                        }
                                                                     }else{
                                                                         for(int i = 0; i < userVect.size(); i++){
                                                                             if(query[1] == userVect[i].getUserName()){
@@ -468,9 +517,6 @@ int main(){
                                                                                     if(userVect[i].getUserName() == query[1]){
                                                                                         currUserPtr = &userVect[i];
                                                                                         found = true;
-                                                                                        cout << currDirPtr->getPermissions() << endl ;
-                                                                                        cout << currDirPtr->getUserName() << endl;
-                                                                                        cout << currDirPtr->getGroupName() << endl;
                                                                                     }
                                                                                 }
                                                                                 if(!found && query.size() == 2){
