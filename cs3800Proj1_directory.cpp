@@ -75,6 +75,7 @@ directory* directory::cd(string objName, directory* newParent){
             return innerDirectories[i]; //returns a pointer, since most work for cd is in main
         }
     }
+    return nullptr;
 }
 void directory::pwd(){ //kind of redundant, but it spits out a path
     cout << getPath() + '/' << endl;
