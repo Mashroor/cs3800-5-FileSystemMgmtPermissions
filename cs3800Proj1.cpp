@@ -80,16 +80,13 @@ int main(){
                                 currDirPtr = currDirPtr->cd(query[1], currDirPtr);
                             }
                             else{
-                                cout << "Permission denied.\n";
+                                cout << "-mash: Permission denied.\n";
                             }
                         }
                     }
                 }
                 if(!found){ //directory not found message
-                    cout << "-mash: cd: " 
-                         << query[1] 
-                         << ": No such directory" 
-                         << endl;
+                    cout << "-mash: cd: " << query[1] << ": No such directory" << endl;
                 }
             }else{
                 if(query[0] == "pwd"){
@@ -123,10 +120,7 @@ int main(){
                                 }
                             }
                             if(found == true){ //error message if not found
-                                cout << "-mash: mkdir: " 
-                                     << query[1] 
-                                     << ": file or directory exists" 
-                                     << endl;
+                                cout << "-mash: mkdir: " << query[1] << ": file or directory exists" << endl;
                             }else{
 
                                 if((currDirPtr->getUserName() == currUserPtr->getUserName() && currDirPtr->getPermissions()[1] == 'w') //if user has permission to access
@@ -134,7 +128,7 @@ int main(){
                                 || (currDirPtr->getPermissions()[7] == 'w')){
                                     currDirPtr->mkdir(query[1], *currUserPtr); 
                                 }else{
-                                    cout << "Permission Denied.\n";
+                                    cout << "-mash: Permission denied.\n";
                                 }
                                 
                             }
@@ -142,15 +136,12 @@ int main(){
                             if(query[0] == "touch"){ //create a file. dummy obj
                                 found = false;
                                 for (int i = 0; i < currDirPtr->getSize(); i++){
-                                    if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[1]){
+                                    if(currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[1]){
                                         found = true;
                                     }
                                 }
-                                if(found == true){ //error message if not found
-                                    cout << "-mash: touch: " 
-                                         << query[1] 
-                                         << ": directory exists" 
-                                         << endl;
+                                if(found){ //error message if not found
+                                    currDirPtr->touch(query[1], *currUserPtr);
                                 }else{
                                     currDirPtr->touch(query[1], *currUserPtr);
                                 }
@@ -174,15 +165,12 @@ int main(){
                                                 || (currDirPtr->getPermissions()[7] == 'w')){
                                                 currDirPtr->rmdir(query[1]);
                                             }else{
-                                                cout << "Permission denied\n";
+                                                cout << "-mash: Permission denied.\n";
                                             }
                                         }
                                     }
                                     if(found == false){ //error message if not found
-                                        cout << "-mash: rmdir: " 
-                                             << query[1] 
-                                             << ": No such directory" 
-                                             << endl;
+                                        cout << "-mash: rmdir: " << query[1] << ": No such directory" << endl;
                                     }
                                 }else{
                                     if(query[0] == "rm"){ //for files, nothing special. same search mech
@@ -204,38 +192,42 @@ int main(){
                                                 || (currDirPtr->getPermissions()[7] == 'w')){
                                                     currDirPtr->rm(query[1]);
                                                 }else{
-                                                    cout << "Permission denied.\n";
+                                                    cout << "-mash: Permission denied.\n";
 
                                                 }
                                             }
                                         }
                                         if(found == false){
-                                            cout << "-mash: rm: " 
-                                                 << query[1] 
-                                                 << ": No such file" 
-                                                 << endl;
+                                            cout << "-mash: rm: " << query[1] << ": No such file" << endl;
                                         }
                                     }else{
                                         if(query[0] == "chmod"){ //requires 3 items in query vect. check
                                             found = false;
                                             string tempDirectoryGroup;
                                             for(int i = 0; i < currDirPtr->getDirectoryVect().size(); i++){ //search for a temporary Directory group
-                                                for(int j = 0;j < currUserPtr->getGroupVector().size();j++){
+                                                for(int j = 0; j < currUserPtr->getGroupVector().size();j++){
                                                     if(currDirPtr->getDirectoryVect()[i]->getGroupName() == currUserPtr->getGroupVector()[j].getGroupName()){
                                                         tempDirectoryGroup = currUserPtr->getGroupVector()[j].getGroupName();
                                                     }
                                                 }
                                             }
+                                            string tempFileGroup;
+                                            for(int i = 0; i <currDirPtr->getFilesVect().size(); i++){
+                                                for(int j = 0; j < currUserPtr->getGroupVector().size();j++){
+                                                    if(currDirPtr->getFilesVect()[i].getGroupName() == currUserPtr->getGroupVector()[j].getGroupName()){
+                                                        tempFileGroup = currUserPtr->getGroupVector()[j].getGroupName();
+                                                    }
+                                                }
+                                            }
                                             for (int i = 0; i < currDirPtr->getSize(); i++){
                                                 if(query.size() == 3){ //make sure we have 3 things
-                                                    if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[2]){
-                                                        if((query[2] == currDirPtr->getDirectoryVect()[i]->getUserName() && currDirPtr->getDirectoryVect()[i]->getPermissions()[1] == 'w') //if user has permission to access
-                                                        || (currDirPtr->getDirectoryVect()[i]->getGroupName() == tempDirectoryGroup && currDirPtr->getDirectoryVect()[i]->getPermissions()[4] == 'w')  //if group has permission
-                                                        || (currDirPtr->getFilesVect()[i].getPermissions()[7] == 'w')
-                                                        || (currUserPtr->getUserName() == currDirPtr->getDirectoryVect()[i]->getUserName())){
+                                                    if(currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[2]){
+                                                        if((currUserPtr->getUserName() == currDirPtr->getDirectoryVect()[i]->getUserName() &&currDirPtr->getDirectoryVect()[i]->getPermissions()[1] == 'w')
+                                                        ||(currDirPtr->getDirectoryVect()[i]->getGroupName() == tempFileGroup && currDirPtr->getDirectoryVect()[i]->getPermissions()[4] == 'w')
+                                                        ||(currDirPtr->getDirectoryVect()[i]->getPermissions()[7] == 'w')){
                                                             currDirPtr->chmod(query[1], query[2]);
                                                         }else{
-                                                            cout << "Permission denied.\n";
+                                                            cout << "-mash: Permission denied.\n";
                                                         }
                                                         found = true;
                                                     }
@@ -244,28 +236,22 @@ int main(){
                                             for (int i = 0; i < currDirPtr->getFilesSize(); i++){
                                                 if(query.size() == 3){ //make sure we have 3 things
                                                     if(currDirPtr->getFilesVect()[i].getFileName() == query[2]){
-                                                        if((query[2] == currDirPtr->getFilesVect()[i].getUserName() && currDirPtr->getFilesVect()[i].getPermissions()[1] == 'w') //if user has permission to access
-                                                        || (currDirPtr->getFilesVect()[i].getGroupName() == tempDirectoryGroup && currDirPtr->getFilesVect()[i].getPermissions()[4] == 'w')  //if group has permission
-                                                        || (currDirPtr->getFilesVect()[i].getPermissions()[7] == 'w')
-                                                        || (currUserPtr->getUserName() == currDirPtr->getFilesVect()[i].getUserName())){
+                                                        if((currUserPtr->getUserName() == currDirPtr->getFilesVect()[i].getUserName() && currDirPtr->getFilesVect()[i].getPermissions()[1] == 'w') //if user has permission to access
+                                                        || (currDirPtr->getFilesVect()[i].getGroupName() == tempFileGroup && currDirPtr->getFilesVect()[i].getPermissions()[4] == 'w')  //if group has permission
+                                                        || (currDirPtr->getFilesVect()[i].getPermissions()[7] == 'w')){
                                                             currDirPtr->chmod(query[1], query[2]);
                                                         }else{
-                                                            cout << "Permission denied.\n";
+                                                            cout << "-mash: Permission denied.\n";
                                                         }
                                                         found = true;
                                                     }
                                                 }
                                             }
                                             if(found == false && query.size() == 3 ){ //if file/dir doesn't exist
-                                                cout << "-mash: chmod:" 
-                                                     << query[2] 
-                                                     << ": No such file or directory" 
-                                                     << endl;
+                                                cout << "-mash: chmod:" << query[2] << ": No such file or directory" << endl;
                                             }else{
-                                                if(query.size() != 3){ //invalid definition of chmod
-                                                    cout << "-mash: chmod"  
-                                                        << ": No such definition of chmod" 
-                                                        << endl;
+                                                if(query.size() != 3 && query[2].size() != 3){ //invalid definition of chmod
+                                                    cout << "-mash: chmod: No such definition of chmod" << endl;
                                                 }
                                             }
                                         }else{
@@ -312,20 +298,14 @@ int main(){
                                                         }
                                                     }
                                                     if(query[0].size() == 2){ //if empty command
-                                                        cout << "-mash: " 
-                                                             << query[0] 
-                                                             << ": is a directory" 
-                                                             << endl;
+                                                        cout << "-mash: " << query[0] << ": is a directory" << endl;
                                                     }
                                                     else{
                                                         if(found == false && perm){ //no file to execute
-                                                            cout << "-mash: " 
-                                                                << query[0] 
-                                                                << ": No such file or directory" 
-                                                                << endl;
+                                                            cout << "-mash: " << query[0] << ": No such file or directory" << endl;
                                                         }else{
                                                             if(!found && !perm){
-                                                                cout << "Permission denied.\n";
+                                                                cout << "-mash: Permission denied.\n";
                                                             }
                                                         }
                                                     }
@@ -347,14 +327,10 @@ int main(){
                                                                     }
                                                                 }
                                                                 if(found){
-                                                                    cout << "groupadd: group '"
-                                                                         << query[1]
-                                                                         << "' already exists\n";
+                                                                    cout << "groupadd: group '" << query[1] << "' already exists\n";
                                                                 }else{
                                                                     if(query.size() != 2){
-                                                                        cout << "-mash: groupadd"  
-                                                                             << ": No such definition of groupadd" 
-                                                                             << endl;
+                                                                        cout << "-mash: groupadd" << ": No such definition of groupadd" << endl;
                                                                     }else{
                                                                         group newGroup(query[1]);
                                                                         groupsVect.push_back(newGroup);
@@ -409,9 +385,7 @@ int main(){
                                                                             }
                                                                         }else{
                                                                             if(query.size() != 4){
-                                                                                cout << "-mash: useradd -G"  
-                                                                                    << ": No such definition of useradd -G" 
-                                                                                    << endl;
+                                                                                cout << "-mash: useradd -G" << ": No such definition of useradd -G" << endl;
                                                                             }
                                                                         }
                                                                     }else{
@@ -421,14 +395,10 @@ int main(){
                                                                             }
                                                                         }
                                                                         if(found && query.size() == 2){
-                                                                            cout << "useradd: user '"
-                                                                                << query[1]
-                                                                                << "' already exists\n";
+                                                                            cout << "useradd: user '" << query[1] << "' already exists" << endl;;
                                                                         }else{
                                                                             if(query.size() != 2){
-                                                                                cout << "-mash: useradd"  
-                                                                                    << ": No such definition of useradd" 
-                                                                                    << endl;
+                                                                                cout << "-mash: useradd"  << ": No such definition of useradd" << endl;
                                                                             }else{
                                                                                 user newUser(query[1]);
                                                                                 userVect.push_back(newUser); //add new piece
@@ -444,7 +414,7 @@ int main(){
                                                                                     for(int j = 0; j < userVect[i].getGroupVector().size(); j++){
                                                                                         if(query[2] == userVect[i].getGroupVector()[j].getGroupName()){
                                                                                             if(userVect[i].getGroupVector()[j].getGroupName() == "users"){
-                                                                                                cout << "-mash: userdel -G: Cannot delete default group\n";
+                                                                                                cout << "-mash: userdel -G: Cannot delete default group" << endl;;
                                                                                                 found = true;
                                                                                                 defaultDelete = true;
                                                                                             }
@@ -461,14 +431,10 @@ int main(){
                                                                                 }
                                                                             }
                                                                             if(found == false && query.size() == 4){
-                                                                                cout << "userdel -G: user '"
-                                                                                    << query[3]
-                                                                                    << "' is not a part of specified group\n";
+                                                                                cout << "userdel -G: user '" << query[3] << "' is not a part of specified group" << endl;
                                                                             }else{
                                                                                 if(query.size() != 4){
-                                                                                    cout << "-mash: userdel"  
-                                                                                        << ": No such definition of userdel" 
-                                                                                        << endl;
+                                                                                    cout << "-mash: userdel" << ": No such definition of userdel" << endl;
                                                                                 }
                                                                             }
                                                                         }else{
@@ -479,19 +445,15 @@ int main(){
                                                                                     if(query[1] != currUserPtr->getUserName()){
                                                                                         userVect.erase(userVect.begin()+i);
                                                                                     }else{
-                                                                                        cout << "-mash: userdel: cannot delete current user\n";
+                                                                                        cout << "-mash: userdel: cannot delete current user" << endl;
                                                                                     }
                                                                                 }
                                                                             }
                                                                             if(found == false && query.size() == 2){
-                                                                                cout << "userdel: user '"
-                                                                                    << query[1]
-                                                                                    << "' does not exist\n";
+                                                                                cout << "userdel: user '" << query[1] << "' does not exist\n";
                                                                             }else{
                                                                                 if(query.size() != 2){
-                                                                                    cout << "-mash: userdel"  
-                                                                                        << ": No such definition of userdel" 
-                                                                                        << endl;
+                                                                                    cout << "-mash: userdel" << ": No such definition of userdel" << endl;
                                                                                 }
                                                                             }
                                                                         }
@@ -531,19 +493,13 @@ int main(){
                                                                                 }
                                                                             }
                                                                             if(!foundGroup && query.size() == 4){
-                                                                                cout << "usermod: group '"
-                                                                                        << query[3]
-                                                                                        << "' does not exist\n";
+                                                                                cout << "usermod: group '" << query[3] << "' does not exist\n";
                                                                             }else{
                                                                                 if(!found && query.size() == 4){
-                                                                                    cout << "usermod: User is already in group '"
-                                                                                         << query[3]
-                                                                                         << "'\n";
+                                                                                    cout << "usermod: User is already in group '" << query[3] << "'\n";
                                                                                 }else{
                                                                                     if(query.size() != 4){
-                                                                                        cout << "-mash: usermod"  
-                                                                                            << ": No such definition of usermod" 
-                                                                                            << endl;
+                                                                                        cout << "-mash: usermod" << ": No such definition of usermod" << endl;
                                                                                     }
                                                                                 }
                                                                             }
@@ -557,102 +513,141 @@ int main(){
                                                                                     }
                                                                                 }
                                                                                 if(!found && query.size() == 2){
-                                                                                    cout << "switchto: user '"
-                                                                                        << query[1]
-                                                                                        << "' does not exist\n";
+                                                                                    cout << "switchto: user '" << query[1]<< "' does not exist\n";
                                                                                 }else{
                                                                                     if(query.size() != 2){
-                                                                                        cout << "-mash: switchto"  
-                                                                                            << ": No such definition of switchto" 
-                                                                                            << endl;
+                                                                                        cout << "-mash: switchto"  << ": No such definition of switchto" << endl;
                                                                                     }
                                                                                 }
                                                                             }else{
                                                                                 if(query[0] == "chown"){
                                                                                     bool dirFound = false;
                                                                                     bool fileFound = false;
+                                                                                    bool userFound = false;
                                                                                     found = false;
                                                                                     for(int i = 0; i < userVect.size(); i++){ //search if user exists
                                                                                         if(query[1] == userVect[i].getUserName()){
-                                                                                            found = true;
+                                                                                            userFound = true;
+                                                                                        }
+                                                                                    }
+                                                                                    string tempDirectoryGroup;
+                                                                                    for(int i = 0; i < currDirPtr->getDirectoryVect().size(); i++){ //search for a temporary Directory group
+                                                                                        for(int j = 0;j < currUserPtr->getGroupVector().size();j++){
+                                                                                            if(currDirPtr->getDirectoryVect()[i]->getGroupName() == currUserPtr->getGroupVector()[j].getGroupName()){
+                                                                                                tempDirectoryGroup = currUserPtr->getGroupVector()[j].getGroupName();
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                    string tempFileGroup;
+                                                                                    for(int i = 0; i <currDirPtr->getFilesVect().size(); i++){
+                                                                                        for(int j = 0;j < currUserPtr->getGroupVector().size();j++){
+                                                                                            if(currDirPtr->getFilesVect()[i].getGroupName() == currUserPtr->getGroupVector()[j].getGroupName()){
+                                                                                                tempFileGroup = currUserPtr->getGroupVector()[j].getGroupName();
+                                                                                            }
                                                                                         }
                                                                                     }
                                                                                     for (int i = 0; i < currDirPtr->getSize(); i++){ //change user of directory
                                                                                         if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[2]){
+                                                                                            if((currUserPtr->getUserName() == currDirPtr->getDirectoryVect()[i]->getUserName() && currDirPtr->getDirectoryVect()[i]->getPermissions()[1] == 'w') //if user has permission to access
+                                                                                            || (currDirPtr->getDirectoryVect()[i]->getGroupName() == tempDirectoryGroup && currDirPtr->getDirectoryVect()[i]->getPermissions()[4] == 'w')  //if group has permission
+                                                                                            || (currDirPtr->getDirectoryVect()[i]->getPermissions()[7] == 'w')){
+                                                                                                    if(userFound){
+                                                                                                        currDirPtr->getDirectoryVect()[i]->setUserName(query[1]);
+                                                                                                    }
+                                                                                                }
+                                                                                                else{
+                                                                                                    cout << "-mash: Permission denied.\n";
+                                                                                                }
                                                                                             dirFound = true;
-                                                                                            currDirPtr->getDirectoryVect()[i]->setUserName(query[1]);
-                                                                                            cout << query[1] << endl;
                                                                                         }
                                                                                     }
                                                                                     for (int i = 0; i < currDirPtr->getFilesSize(); i++){ //change owner of file
                                                                                         if(currDirPtr->getFilesVect()[i].getFileName() == query[2]){
+                                                                                            if((currUserPtr->getUserName() == currDirPtr->getFilesVect()[i].getUserName() && currDirPtr->getFilesVect()[i].getPermissions()[1] == 'w') //if user has permission to access
+                                                                                            || (currDirPtr->getFilesVect()[i].getGroupName() == tempFileGroup && currDirPtr->getFilesVect()[i].getPermissions()[4] == 'w')  //if group has permission
+                                                                                            || (currDirPtr->getFilesVect()[i].getPermissions()[7] == 'w')){
+                                                                                                    if(userFound){
+                                                                                                        currDirPtr->getFilesVect()[i].setUserName(query[1]);
+                                                                                                    }
+                                                                                                }else{
+                                                                                                    cout << "-mash: Permission denied.\n";
+                                                                                                }
                                                                                             fileFound = true;
-                                                                                            currDirPtr->getFilesVect()[i].setUserName(query[1]);
                                                                                         }
                                                                                     }
-                                                                                    if(found == false){
-                                                                                        cout << "-mash:  "
-                                                                                         << query[2]
-                                                                                         << ": no such file or directory\n";
-                                                                                    }
-                                                                                    if(found && query.size() == 3){
-                                                                                        if(!dirFound && !fileFound){
-                                                                                            cout << "-mash: "
-                                                                                                 << query[2]
-                                                                                                 << ": illegal command\n";
+                                                                                    if(!userFound){
+                                                                                            cout << "-mash: " << query[2] << ": no such user on system\n";
+                                                                                        }else if(!fileFound && !dirFound){
+                                                                                            cout << "-mash: " << query[2] << ": no such file or directory\n";
                                                                                         }
-                                                                                    }else{
-                                                                                        if(query.size() != 3){
-                                                                                        cout << "-mash: chown"  
-                                                                                             << ": No such definition of chmod" 
-                                                                                             << endl;
-                                                                                        }
+                                                                                    if(query.size() != 3){
+                                                                                        cout << "-mash: chown" << ": No such definition of chown" << endl;
                                                                                     }
                                                                                 }else{
                                                                                     if(query[0] == "chgrp"){
                                                                                         bool dirFound = false;
                                                                                         bool fileFound = false;
+                                                                                        bool groupFound = false;
                                                                                         found = false;
-                                                                                        for(int i = 0; i < userVect.size(); i++){ //search if user exists
-                                                                                            if(query[1] == userVect[i].getUserName()){
-                                                                                                found = true;
+                                                                                        for(int i = 0; i < groupsVect.size(); i++){
+                                                                                            if(query[1] == groupsVect[i].getGroupName()){
+                                                                                                    groupFound = true;
+                                                                                            }
+                                                                                        }
+                                                                                        string tempDirectoryGroup;
+                                                                                        for(int i = 0; i < currDirPtr->getDirectoryVect().size(); i++){ //search for a temporary Directory group
+                                                                                            for(int j = 0;j < currUserPtr->getGroupVector().size();j++){
+                                                                                                if(currDirPtr->getDirectoryVect()[i]->getGroupName() == currUserPtr->getGroupVector()[j].getGroupName()){
+                                                                                                    tempDirectoryGroup = currUserPtr->getGroupVector()[j].getGroupName();
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                        string tempFileGroup;
+                                                                                        for(int i = 0; i <currDirPtr->getFilesVect().size(); i++){
+                                                                                            for(int j = 0;j < currUserPtr->getGroupVector().size();j++){
+                                                                                                if(currDirPtr->getFilesVect()[i].getGroupName() == currUserPtr->getGroupVector()[j].getGroupName()){
+                                                                                                    tempFileGroup = currUserPtr->getGroupVector()[j].getGroupName();
+                                                                                                }
                                                                                             }
                                                                                         }
                                                                                         for (int i = 0; i < currDirPtr->getSize(); i++){ //change user of directory
-                                                                                            if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[2]){
+                                                                                            if(currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[2]){
+                                                                                                if(((currUserPtr->getUserName() == currDirPtr->getDirectoryVect()[i]->getUserName() && currDirPtr->getDirectoryVect()[i]->getPermissions()[1] == 'w') //if user has permission to access
+                                                                                                || (currDirPtr->getDirectoryVect()[i]->getGroupName() == tempDirectoryGroup && currDirPtr->getDirectoryVect()[i]->getPermissions()[4] == 'w')  //if group has permission
+                                                                                                || (currDirPtr->getDirectoryVect()[i]->getPermissions()[7] == 'w'))){
+                                                                                                    if(groupFound){
+                                                                                                        currDirPtr->getDirectoryVect()[i]->setGroupName(query[1]);
+                                                                                                    }
+                                                                                                }else{
+                                                                                                    cout << "-mash: Permission denied.\n";
+                                                                                                }
                                                                                                 dirFound = true;
-                                                                                                currDirPtr->getDirectoryVect()[i]->setGroupName(query[1]);
-                                                                                                cout << query[1] << endl;
                                                                                             }
                                                                                         }
                                                                                         for (int i = 0; i < currDirPtr->getFilesSize(); i++){ //change owner of file
                                                                                             if(currDirPtr->getFilesVect()[i].getFileName() == query[2]){
+                                                                                                if(((currUserPtr->getUserName() == currDirPtr->getFilesVect()[i].getUserName() && currDirPtr->getFilesVect()[i].getPermissions()[1] == 'w') //if user has permission to access
+                                                                                                || (currDirPtr->getFilesVect()[i].getGroupName() == tempFileGroup && currDirPtr->getFilesVect()[i].getPermissions()[4] == 'w')  //if group has permission
+                                                                                                || (currDirPtr->getFilesVect()[i].getPermissions()[7] == 'w'))){
+                                                                                                    if(groupFound){
+                                                                                                        currDirPtr->getFilesVect()[i].setGroupName(query[1]);
+                                                                                                    }
+                                                                                                }else{
+                                                                                                    cout << "-mash: Permission denied.\n";
+                                                                                                }
                                                                                                 fileFound = true;
-                                                                                                currDirPtr->getFilesVect()[i].setGroupName(query[1]);
                                                                                             }
                                                                                         }
-                                                                                        if(found == false){
-                                                                                            cout << "-mash:  "
-                                                                                            << query[2]
-                                                                                            << ": no such file or directory\n";
+                                                                                        if(!groupFound){
+                                                                                            cout << "-mash: " << query[2] << ": no such group on system\n";
+                                                                                        }else if(!fileFound && !dirFound){
+                                                                                            cout << "-mash: " << query[2] << ": no such file or directory\n";
                                                                                         }
-                                                                                        if(found && query.size() == 3){
-                                                                                            if(!dirFound && !fileFound){
-                                                                                                cout << "-mash: "
-                                                                                                    << query[2]
-                                                                                                    << ": illegal command\n";
+                                                                                        if(query.size() != 3){
+                                                                                            cout << "-mash: chgrp" << ": No such definition of chmod" << endl;
                                                                                             }
-                                                                                        }else{
-                                                                                            if(query.size() != 3){
-                                                                                            cout << "-mash: chgrp"  
-                                                                                                << ": No such definition of chmod" 
-                                                                                                << endl;
-                                                                                            }
-                                                                                    }
                                                                                     }else{
-                                                                                        cout << "-mash: " 
-                                                                                            << query[0]
-                                                                                            << ": command not found\n";
+                                                                                        cout << "-mash: " << query[0] << ": command not found\n";
                                                                                     }
                                                                                 }
                                                                             }

@@ -99,12 +99,16 @@ void directory::ls(user owner){ //this function is just a pretty print
         }
     }
     for (int i = 0; i < innerDirectories.size(); i++){
-        if((owner.getUserName() == innerDirectories[i]->getUserName() && innerDirectories[i]->getPermissions()[0] == 'r') || ((tempDirGroup == innerDirectories[i]->getGroupName() && innerDirectories[i]->getPermissions()[3] == 'r')) || (innerDirectories[i]->getPermissions()[6] == 'r')){
+        if((owner.getUserName() == innerDirectories[i]->getUserName() && innerDirectories[i]->getPermissions()[0] == 'r') 
+        || ((tempDirGroup == innerDirectories[i]->getGroupName() && innerDirectories[i]->getPermissions()[3] == 'r')) 
+        || (innerDirectories[i]->getPermissions()[6] == 'r')){
             cout << BOLDCYAN << innerDirectories[i]->getDirectoryName() << RESET <<  '/' << "\t";
         }
     }
     for (int i = 0; i < innerFiles.size(); i++){
-        if((owner.getUserName() == innerFiles[i].getUserName() && innerFiles[i].getPermissions()[0] == 'r') || ((tempFileGroup == innerFiles[i].getGroupName() && innerFiles[i].getPermissions()[3] == 'r') || (innerFiles[i].getPermissions()[6] == 'r'))){
+        if((owner.getUserName() == innerFiles[i].getUserName() && innerFiles[i].getPermissions()[0] == 'r') 
+        || ((tempFileGroup == innerFiles[i].getGroupName() && innerFiles[i].getPermissions()[3] == 'r') 
+        || (innerFiles[i].getPermissions()[6] == 'r'))){
             cout << innerFiles[i].getFileName() << "\t";
         }
     }
@@ -128,7 +132,9 @@ void directory::ls_l(user owner){ //a detailed pretty print. Not special
         }
     }
     for(int i = 0; i < innerDirectories.size(); i++){
-        if((owner.getUserName() == innerDirectories[i]->getUserName() && innerDirectories[i]->getPermissions()[0] == 'r') || ((tempDirGroup == innerDirectories[i]->getGroupName() && innerDirectories[i]->getPermissions()[3] == 'r')) || (innerDirectories[i]->getPermissions()[6] == 'r')){
+        if((owner.getUserName() == innerDirectories[i]->getUserName() && innerDirectories[i]->getPermissions()[0] == 'r') 
+        || ((tempDirGroup == innerDirectories[i]->getGroupName() && innerDirectories[i]->getPermissions()[3] == 'r')) 
+        || (innerDirectories[i]->getPermissions()[6] == 'r')){
             cout << 'd'
                 << innerDirectories[i]->getPermissions() << "\t"
                 << innerDirectories[i]->getUserName() << "\t"
@@ -139,7 +145,9 @@ void directory::ls_l(user owner){ //a detailed pretty print. Not special
             }
         }
     for (int i = 0; i < innerFiles.size(); i++){
-        if((owner.getUserName() == innerFiles[i].getUserName() && innerFiles[i].getPermissions()[0] == 'r') || ((tempFileGroup == innerFiles[i].getGroupName() && innerFiles[i].getPermissions()[3] == 'r')) || (innerFiles[i].getPermissions()[6] == 'r')){
+        if((owner.getUserName() == innerFiles[i].getUserName() && innerFiles[i].getPermissions()[0] == 'r') 
+        || ((tempFileGroup == innerFiles[i].getGroupName() && innerFiles[i].getPermissions()[3] == 'r')) 
+        || (innerFiles[i].getPermissions()[6] == 'r')){
             cout << '-'
                 << innerFiles[i].getPermissions() << "\t"
                 << innerFiles[i].getUserName() << "\t"
@@ -175,14 +183,56 @@ void directory::mkdir(string newDirName, user dirOwner){
     innerDirectories.push_back(newDir);
 }
 void directory::touch(string newFileName, user fileOwner){
+    string tempDirGroup;
+    for(int i = 0; i <innerDirectories.size(); i++){
+        for(int j = 0;j < fileOwner.getGroupVector().size();j++){
+            if(innerDirectories[i]->getGroupName() == fileOwner.getGroupVector()[j].getGroupName()){
+                tempDirGroup = fileOwner.getGroupVector()[j].getGroupName();
+            }
+        }
+    }
+    string tempFileGroup;
+    for(int i = 0; i <innerFiles.size(); i++){
+        for(int j = 0;j < fileOwner.getGroupVector().size();j++){
+            if(innerFiles[i].getGroupName() == fileOwner.getGroupVector()[j].getGroupName()){
+                tempFileGroup = fileOwner.getGroupVector()[j].getGroupName();
+            }
+        }
+    }
+
     for(int i = 0; i < innerFiles.size(); i++){ //update timestamp if existing
         if(innerFiles[i].getFileName() == newFileName){
-            innerFiles[i].setTimestamp();
+            if((fileOwner.getUserName() == innerFiles[i].getUserName() && innerFiles[i].getPermissions()[1] == 'w') 
+            || ((tempFileGroup == innerFiles[i].getGroupName() && innerFiles[i].getPermissions()[4] == 'w')) 
+            || (innerFiles[i].getPermissions()[7] == 'w')){
+                innerFiles[i].setTimestamp();
+            }else{
+                cout << "-mash: Permission denied.\n";
+            }
             return;
         }
     }
-    file newFile(newFileName, fileOwner); //create a new file
-    innerFiles.push_back(newFile);
+    for(int i = 0; i < innerDirectories.size(); i++){
+        if(innerDirectories[i]->getDirectoryName() == newFileName){
+            if((fileOwner.getUserName() == innerDirectories[i]->getUserName() && innerDirectories[i]->getPermissions()[1] == 'w') 
+            || ((tempDirGroup == innerDirectories[i]->getGroupName() && innerDirectories[i]->getPermissions()[4] == 'w')) 
+            || (innerDirectories[i]->getPermissions()[7] == 'w')){
+                innerDirectories[i]->setTimestamp();
+            }else{
+                cout << "-mash: Permission denied.\n";
+            }
+            return;
+        }
+    }
+    
+        if((fileOwner.getUserName() == userName && permissions[1] == 'w') //check if the curret user can act in the folder
+            || ((tempDirGroup == groupName && permissions[4] == 'w')) 
+            || (permissions[7] == 'w')){
+                file newFile(newFileName, fileOwner); //create a new file
+                innerFiles.push_back(newFile);
+                }else{
+                    cout << "-mash: Permission denied.\n";
+                }
     return;
 }
 void directory::rmdir(string dirToDel){ //removes a directory. destructor is called when out of scope
