@@ -148,6 +148,9 @@ int main(){
                             }else{
                                 if(query[0] == "rmdir"){ //remove a directory, needs to call destructor. avoid mem leak
                                     found = false; //search for if directory or file exists first, set false to jump out when found
+                                    for(int i = 0; i < currDirPtr->getSize(); i++){
+                                        found = true;
+                                    }
 
                                     string tempDirectoryGroup;
                                     for(int i = 0; i < currDirPtr->getDirectoryVect().size(); i++){ //search for a temporary Directory group
@@ -160,9 +163,9 @@ int main(){
                                     for (int i = 0; i < currDirPtr->getSize(); i++){
                                         if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[1]){
                                             found = true;
-                                            if((currDirPtr->getUserName() == currUserPtr->getUserName() && currDirPtr->getPermissions()[1] == 'w') //if user has permission to access
-                                                || (currDirPtr->getGroupName() == tempDirectoryGroup && currDirPtr->getPermissions()[4] == 'w')  //if group has permission
-                                                || (currDirPtr->getPermissions()[7] == 'w')){
+                                            if((currDirPtr->getDirectoryVect()[i]->getUserName() == currUserPtr->getUserName() && currDirPtr->getDirectoryVect()[i]->getPermissions()[1] == 'w') //if user has permission to access
+                                                || (currDirPtr->getDirectoryVect()[i]->getGroupName() == tempDirectoryGroup && currDirPtr->getDirectoryVect()[i]->getPermissions()[4] == 'w')  //if group has permission
+                                                || (currDirPtr->getDirectoryVect()[i]->getPermissions()[7] == 'w')){
                                                 currDirPtr->rmdir(query[1]);
                                             }else{
                                                 cout << "-mash: Permission denied.\n";
@@ -187,9 +190,9 @@ int main(){
                                         for (int i = 0; i < currDirPtr->getFilesSize(); i++){
                                             if(currDirPtr->getFilesVect()[i].getFileName() == query[1]){
                                                 found = true;
-                                                if((currDirPtr->getUserName() == currUserPtr->getUserName() && currDirPtr->getPermissions()[1] == 'w') //if user has permission to access
-                                                || (currDirPtr->getGroupName() == tempDirectoryGroup && currDirPtr->getPermissions()[4] == 'w')  //if group has permission
-                                                || (currDirPtr->getPermissions()[7] == 'w')){
+                                                if((currDirPtr->getFilesVect()[i].getUserName() == currUserPtr->getUserName() && currDirPtr->getFilesVect()[i].getPermissions()[1] == 'w') //if user has permission to access
+                                                || (currDirPtr->getFilesVect()[i].getGroupName() == tempDirectoryGroup && currDirPtr->getFilesVect()[i].getPermissions()[4] == 'w')  //if group has permission
+                                                || (currDirPtr->getFilesVect()[i].getPermissions()[7] == 'w')){
                                                     currDirPtr->rm(query[1]);
                                                 }else{
                                                     cout << "-mash: Permission denied.\n";
