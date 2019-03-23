@@ -8,6 +8,7 @@
 #include <cstring>
 #include <string>
 #include <cctype>
+#include<algorithm>
 
 #define BOLDCYAN "\033[1m\033[36m"
 #define RESET "\033[0m"
@@ -342,55 +343,88 @@ int main(){
                                                             }else{
                                                                 if(query[0] == "useradd"){
                                                                     found = false;
-                                                                    bool foundUser = false;
-                                                                    bool inUserGroups = false;
+                                                                    bool existingGroup = false;
+                                                                    int counter = 0;
                                                                     if(query[1] == "-G"){
+                                                                        
                                                                         vector<string> listToAdd;
-
                                                                         istringstream groupString(query[2]); //start splitting csv string here. same as spaced string before
                                                                         string temp;
                                                                         while(getline(groupString, temp, ',')){
                                                                             listToAdd.push_back(temp);
                                                                         }
+                                                                        for(int i = 0; i < userVect.size(); i++){ //check to see if user already exits
+                                                                            if(query[3] == userVect[i].getUserName()){
+                                                                                found = true;  //found a user, set bool to create.
+                                                                            }
+                                                                        }
 
-                                                                        for(int i = 0; i < userVect.size(); i++){ //find user
-                                                                            
-                                                                            if(query[3] == userVect[i].getUserName()){ //if the user exists, then
-
-                                                                                foundUser = true;  //we have found the user to add groups to 
-
-                                                                                for(int j = 0; j < listToAdd.size(); j++){ //for each group we want to add
-                                                                                    for(int k = 0; k < groupsVect.size(); k++){ //for each group that exists,
-                                                                                        if(listToAdd[j] == groupsVect[k].getGroupName()){ //if the requested group is in the groups that exist,
-                                                                                            
-                                                                                            group newGroup(listToAdd[j]); //create the temp
-
-                                                                                            // for(int l = 0; l < userVect[i].getGroupVector().size();l++){ //check if its already in the user groups
-                                                                                            //     if(listToAdd[j] == userVect[i].getGroupVector()[l].getGroupName()){ // if the group we want to add is equal to a group that the user already has
-                                                                                            //         inUserGroups = true;
-                                                                                            //         cout << listToAdd[j] << " == " << userVect[i].getGroupVector()[l].getGroupName() << endl;
-                                                                                            //     }
-                                                                                            // }
-                                                                                            if(userVect[i].getUserName() == currUserPtr->getUserName() && !inUserGroups){
-                                                                                                currUserPtr->getGroupVector().push_back(newGroup);
-                                                                                            }else if(!inUserGroups){
-                                                                                                    userVect[i].getGroupVector().push_back(newGroup);  //add the group
-                                                                                            }
-                                                                                            found = true;
-                                                                                        }
-                                                                                    }
+                                                                        for(int i = 0; i < listToAdd.size(); i++){
+                                                                            for(int j = 0; j < groupsVect.size(); j++){
+                                                                                if(listToAdd[i] == groupsVect[j].getGroupName()){
+                                                                                    counter++;
                                                                                 }
                                                                             }
                                                                         }
-                                                                        if(!foundUser && query.size() == 4){
-                                                                            if(!found){
-                                                                                cout << "useradd -G: No such user exists" << endl;
-                                                                            }
+
+
+                                                                        if(found && query.size() == 4){
+                                                                            cout << "useradd: Invalid user creation, groups do not exist" << endl;;
                                                                         }else{
                                                                             if(query.size() != 4){
-                                                                                cout << "-mash: useradd -G" << ": No such definition of useradd -G" << endl;
+                                                                                cout << "-mash: useradd"  << ": No such definition of useradd" << endl;
+                                                                            }else{
+                                                                                if(counter == listToAdd.size()){
+                                                                                    user newUser(query[3]);
+                                                                                    for(int i = 0; i < listToAdd.size(); i++){
+                                                                                        newUser.getGroupVector().push_back(listToAdd[i]);
+                                                                                        groupsVect.push_back(listToAdd[i]);
+                                                                                    }
+                                                                                    userVect.push_back(newUser); //add new piece
+                                                                                }
+
                                                                             }
                                                                         }
+
+
+                                                                    //     for(int i = 0; i < userVect.size(); i++){ //find user
+                                                                            
+                                                                    //         if(query[3] == userVect[i].getUserName()){ //if the user exists, then
+
+                                                                    //             foundUser = true;  //we have found the user to add groups to 
+
+                                                                    //             for(int j = 0; j < listToAdd.size(); j++){ //for each group we want to add
+                                                                    //                 for(int k = 0; k < groupsVect.size(); k++){ //for each group that exists,
+                                                                    //                     if(listToAdd[j] == groupsVect[k].getGroupName()){ //if the requested group is in the groups that exist,
+                                                                                            
+                                                                    //                         group newGroup(listToAdd[j]); //create the temp
+
+                                                                    //                         // for(int l = 0; l < userVect[i].getGroupVector().size();l++){ //check if its already in the user groups
+                                                                    //                         //     if(listToAdd[j] == userVect[i].getGroupVector()[l].getGroupName()){ // if the group we want to add is equal to a group that the user already has
+                                                                    //                         //         inUserGroups = true;
+                                                                    //                         //         cout << listToAdd[j] << " == " << userVect[i].getGroupVector()[l].getGroupName() << endl;
+                                                                    //                         //     }
+                                                                    //                         // }
+                                                                    //                         if(userVect[i].getUserName() == currUserPtr->getUserName() && !inUserGroups){
+                                                                    //                             currUserPtr->getGroupVector().push_back(newGroup);
+                                                                    //                         }else if(!inUserGroups){
+                                                                    //                                 userVect[i].getGroupVector().push_back(newGroup);  //add the group
+                                                                    //                         }
+                                                                    //                         found = true;
+                                                                    //                     }
+                                                                    //                 }
+                                                                    //             }
+                                                                    //         }
+                                                                    //     }
+                                                                    //     if(!foundUser && query.size() == 4){
+                                                                    //         if(!found){
+                                                                    //             cout << "useradd -G: No such user exists" << endl;
+                                                                    //         }
+                                                                    //     }else{
+                                                                    //         if(query.size() != 4){
+                                                                    //             cout << "-mash: useradd -G" << ": No such definition of useradd -G" << endl;
+                                                                    //         }
+                                                                    //     }
                                                                     }else{
                                                                         for(int i = 0; i < userVect.size(); i++){
                                                                             if(query[1] == userVect[i].getUserName()){
