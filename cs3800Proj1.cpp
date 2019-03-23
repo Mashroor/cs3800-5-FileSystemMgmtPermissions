@@ -369,7 +369,7 @@ int main(){
 
 
                                                                         if(found && query.size() == 4){
-                                                                            cout << "useradd: Invalid user creation, groups do not exist" << endl;;
+                                                                            cout << "useradd: Invalid user creation, groups do not exist" << endl;
                                                                         }else{
                                                                             if(query.size() != 4){
                                                                                 cout << "-mash: useradd"  << ": No such definition of useradd" << endl;
@@ -381,6 +381,8 @@ int main(){
                                                                                         groupsVect.push_back(listToAdd[i]);
                                                                                     }
                                                                                     userVect.push_back(newUser); //add new piece
+                                                                                }else{
+                                                                                    cout << "useradd: Invalid user creation, groups do not exist" << endl;
                                                                                 }
 
                                                                             }
