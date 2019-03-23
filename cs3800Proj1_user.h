@@ -20,12 +20,12 @@ class user{
         vector<group> groupVect;
 
     public:
-        user(string name);
+        user(string name); //constructor
 
-        string getUserName() const{return userName;}
+        string getUserName() const{return userName;} //getters
         vector<group>& getGroupVector() {return groupVect;}
 
-        void addGroup(string groupName);
+        void addGroup(string groupName); //function to add groups, just pushes to vector
 };
 
 #endif

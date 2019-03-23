@@ -62,13 +62,13 @@ class directory{
         //Pre: A directory must be the calling object. a length 3, string of a number should be passed in.
         //Post: Permission will be set according the the string passed in.
         void setPermissions(string permCode);
-        //
-        //
-        //
+        //Func: setUserName(string newName)
+        //Pre: A directory should be the calling object, should take any name
+        //Post: should set the name of the user if it exists in the system
         void setUserName(string newName){userName = newName;}
-        //
-        //
-        //
+        //Func: setGroupName(string newName)
+        //Pre: A directory must be the calling object. needs to take any name
+        //Post: should set the name of the group if it exists in the groups vect
         void setGroupName(string newName){groupName = newName;}
         //Func: cd(string, directory*)
         //Pre: A directory should take in a name string along with a pointer to a new parent

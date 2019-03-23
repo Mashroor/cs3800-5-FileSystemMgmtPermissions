@@ -18,10 +18,10 @@ class group{
         string groupName;
 
     public:
-        group(): groupName("null") {};
+        group(): groupName("null") {}; //constructors
         group( const group& source) : groupName(source.groupName){}
         group(string name);
-        string getGroupName() const{return groupName;}
+        string getGroupName() const{return groupName;} //setters and getters. nothing special here
         void setGroupName(string newName){groupName = newName;}
 };
 

@@ -29,7 +29,7 @@ int main(){
     directory* currDirPtr = &currDir; //pointer, this will allow us to move between directories via pointing
 
     vector<user> userVect; //store all users in this. we can move around in this.
-    userVect.reserve(50);
+    userVect.reserve(50); //to avoid screwing with the userVect. had issues with moving the vector entirely
     user defaultUser("user"); //set a default user. of Group default.
     userVect.push_back(defaultUser); //throw this in to keep track of current user. start at default.
     user* currUserPtr = &userVect[0]; //pointer to current user in vector. we will be changing this
@@ -102,12 +102,12 @@ int main(){
                     }else{
                         if(query[0] == "mkdir"){ //allocates a new folder in memory, needs deleting in rmdir
                             found = false;
-                            for (int i = 0; i < currDirPtr->getSize(); i++){
+                            for (int i = 0; i < currDirPtr->getSize(); i++){ //finds if dir exists
                                 if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[1]){
                                     found = true;
                                 }
                             }
-                            for (int i = 0; i < currDirPtr->getFilesSize(); i++){
+                            for (int i = 0; i < currDirPtr->getFilesSize(); i++){ //search if file exists
                                 if(currDirPtr->getFilesVect()[i].getFileName() == query[1]){
                                     found = true;
                                 }
@@ -123,7 +123,6 @@ int main(){
                             if(found == true){ //error message if not found
                                 cout << "-mash: mkdir: " << query[1] << ": file or directory exists" << endl;
                             }else{
-
                                 if((currDirPtr->getUserName() == currUserPtr->getUserName() && currDirPtr->getPermissions()[1] == 'w') //if user has permission to access
                                 || (currDirPtr->getGroupName() == tempDirectoryGroup && currDirPtr->getPermissions()[4] == 'w')  //if group has permission
                                 || (currDirPtr->getPermissions()[7] == 'w')){
@@ -131,7 +130,6 @@ int main(){
                                 }else{
                                     cout << "-mash: Permission denied.\n";
                                 }
-                                
                             }
                         }else{
                             if(query[0] == "touch"){ //create a file. dummy obj
@@ -164,9 +162,9 @@ int main(){
                                     for (int i = 0; i < currDirPtr->getSize(); i++){
                                         if( currDirPtr->getDirectoryVect()[i]->getDirectoryName() == query[1]){
                                             found = true;
-                                            if((currDirPtr->getDirectoryVect()[i]->getUserName() == currUserPtr->getUserName() && currDirPtr->getDirectoryVect()[i]->getPermissions()[1] == 'w') //if user has permission to access
-                                                || (currDirPtr->getDirectoryVect()[i]->getGroupName() == tempDirectoryGroup && currDirPtr->getDirectoryVect()[i]->getPermissions()[4] == 'w')  //if group has permission
-                                                || (currDirPtr->getDirectoryVect()[i]->getPermissions()[7] == 'w')){
+                                            if((currDirPtr->getUserName() == currUserPtr->getUserName() && currDirPtr->getDirectoryVect()[i]->getPermissions()[1] == 'w') //if user has permission to access
+                                                || (currDirPtr->getGroupName() == tempDirectoryGroup && currDirPtr->getDirectoryVect()[i]->getPermissions()[4] == 'w')  //if group has permission
+                                                || (currDirPtr->getPermissions()[7] == 'w')){
                                                 currDirPtr->rmdir(query[1]);
                                             }else{
                                                 cout << "-mash: Permission denied.\n";
@@ -191,9 +189,9 @@ int main(){
                                         for (int i = 0; i < currDirPtr->getFilesSize(); i++){
                                             if(currDirPtr->getFilesVect()[i].getFileName() == query[1]){
                                                 found = true;
-                                                if((currDirPtr->getFilesVect()[i].getUserName() == currUserPtr->getUserName() && currDirPtr->getFilesVect()[i].getPermissions()[1] == 'w') //if user has permission to access
-                                                || (currDirPtr->getFilesVect()[i].getGroupName() == tempDirectoryGroup && currDirPtr->getFilesVect()[i].getPermissions()[4] == 'w')  //if group has permission
-                                                || (currDirPtr->getFilesVect()[i].getPermissions()[7] == 'w')){
+                                                if((currDirPtr->getUserName() == currUserPtr->getUserName() && currDirPtr->getFilesVect()[i].getPermissions()[1] == 'w') //if user has permission to access
+                                                || (currDirPtr->getGroupName() == tempDirectoryGroup && currDirPtr->getFilesVect()[i].getPermissions()[4] == 'w')  //if group has permission
+                                                || (currDirPtr->getPermissions()[7] == 'w')){
                                                     currDirPtr->rm(query[1]);
                                                 }else{
                                                     cout << "-mash: Permission denied.\n";
@@ -216,7 +214,7 @@ int main(){
                                                 }
                                             }
                                             string tempFileGroup;
-                                            for(int i = 0; i <currDirPtr->getFilesVect().size(); i++){
+                                            for(int i = 0; i <currDirPtr->getFilesVect().size(); i++){ //search for temp file group
                                                 for(int j = 0; j < currUserPtr->getGroupVector().size();j++){
                                                     if(currDirPtr->getFilesVect()[i].getGroupName() == currUserPtr->getGroupVector()[j].getGroupName()){
                                                         tempFileGroup = currUserPtr->getGroupVector()[j].getGroupName();
@@ -269,7 +267,6 @@ int main(){
                                                     }
                                                     found = false;
                                                     bool perm = true;
-
                                                     string tempFileGroup;
                                                     for(int i = 0; i < currDirPtr->getDirectoryVect().size(); i++){
                                                         for(int j = 0;j < currUserPtr->getGroupVector().size();j++){
@@ -314,10 +311,10 @@ int main(){
                                                         }
                                                     }
                                                 }else{
-                                                    if(query[0] == "whoami"){
+                                                    if(query[0] == "whoami"){ //for testing. extra
                                                         cout << currUserPtr->getUserName() << '\n';
                                                     }else{
-                                                        if(query[0] == "groups"){
+                                                        if(query[0] == "groups"){ //spits out groups
                                                             for(int i = 0; i < currUserPtr->getGroupVector().size(); i++){
                                                                 cout << currUserPtr->getGroupVector()[i].getGroupName() << " ";
                                                             }
@@ -359,22 +356,20 @@ int main(){
                                                                             }
                                                                         }
 
-                                                                        for(int i = 0; i < listToAdd.size(); i++){
+                                                                        for(int i = 0; i < listToAdd.size(); i++){ //check if the groups exist in the system
                                                                             for(int j = 0; j < groupsVect.size(); j++){
                                                                                 if(listToAdd[i] == groupsVect[j].getGroupName()){
                                                                                     counter++;
                                                                                 }
                                                                             }
                                                                         }
-
-
                                                                         if(found && query.size() == 4){
                                                                             cout << "useradd: Invalid user creation, groups do not exist" << endl;
                                                                         }else{
                                                                             if(query.size() != 4){
                                                                                 cout << "-mash: useradd"  << ": No such definition of useradd" << endl;
                                                                             }else{
-                                                                                if(counter == listToAdd.size()){
+                                                                                if(counter == listToAdd.size()){ //if the number found is equal to all to add,
                                                                                     user newUser(query[3]);
                                                                                     for(int i = 0; i < listToAdd.size(); i++){
                                                                                         newUser.getGroupVector().push_back(listToAdd[i]);
@@ -387,46 +382,6 @@ int main(){
 
                                                                             }
                                                                         }
-
-
-                                                                    //     for(int i = 0; i < userVect.size(); i++){ //find user
-                                                                            
-                                                                    //         if(query[3] == userVect[i].getUserName()){ //if the user exists, then
-
-                                                                    //             foundUser = true;  //we have found the user to add groups to 
-
-                                                                    //             for(int j = 0; j < listToAdd.size(); j++){ //for each group we want to add
-                                                                    //                 for(int k = 0; k < groupsVect.size(); k++){ //for each group that exists,
-                                                                    //                     if(listToAdd[j] == groupsVect[k].getGroupName()){ //if the requested group is in the groups that exist,
-                                                                                            
-                                                                    //                         group newGroup(listToAdd[j]); //create the temp
-
-                                                                    //                         // for(int l = 0; l < userVect[i].getGroupVector().size();l++){ //check if its already in the user groups
-                                                                    //                         //     if(listToAdd[j] == userVect[i].getGroupVector()[l].getGroupName()){ // if the group we want to add is equal to a group that the user already has
-                                                                    //                         //         inUserGroups = true;
-                                                                    //                         //         cout << listToAdd[j] << " == " << userVect[i].getGroupVector()[l].getGroupName() << endl;
-                                                                    //                         //     }
-                                                                    //                         // }
-                                                                    //                         if(userVect[i].getUserName() == currUserPtr->getUserName() && !inUserGroups){
-                                                                    //                             currUserPtr->getGroupVector().push_back(newGroup);
-                                                                    //                         }else if(!inUserGroups){
-                                                                    //                                 userVect[i].getGroupVector().push_back(newGroup);  //add the group
-                                                                    //                         }
-                                                                    //                         found = true;
-                                                                    //                     }
-                                                                    //                 }
-                                                                    //             }
-                                                                    //         }
-                                                                    //     }
-                                                                    //     if(!foundUser && query.size() == 4){
-                                                                    //         if(!found){
-                                                                    //             cout << "useradd -G: No such user exists" << endl;
-                                                                    //         }
-                                                                    //     }else{
-                                                                    //         if(query.size() != 4){
-                                                                    //             cout << "-mash: useradd -G" << ": No such definition of useradd -G" << endl;
-                                                                    //         }
-                                                                    //     }
                                                                     }else{
                                                                         for(int i = 0; i < userVect.size(); i++){
                                                                             if(query[1] == userVect[i].getUserName()){
@@ -499,7 +454,6 @@ int main(){
                                                                     }else{
                                                                         if(query[0] == "usermod" && query[1] == "-a" && query[2] == "-G" ){
                                                                             
-                                                                            // bool alreadyExists = false;
                                                                             bool foundGroup = false;
                                                                             bool inUserGroups = false;
                                                                             found = false;
@@ -578,7 +532,7 @@ int main(){
                                                                                         }
                                                                                     }
                                                                                     string tempFileGroup;
-                                                                                    for(int i = 0; i <currDirPtr->getFilesVect().size(); i++){
+                                                                                    for(int i = 0; i <currDirPtr->getFilesVect().size(); i++){ //search for temporary File group
                                                                                         for(int j = 0;j < currUserPtr->getGroupVector().size();j++){
                                                                                             if(currDirPtr->getFilesVect()[i].getGroupName() == currUserPtr->getGroupVector()[j].getGroupName()){
                                                                                                 tempFileGroup = currUserPtr->getGroupVector()[j].getGroupName();
